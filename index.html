@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Structura Design & Build</title>
+    <title>MILEDESIGNS Design & Build</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -16,6 +16,15 @@
         }
         .font-serif {
             font-family: 'Playfair Display', serif;
+        }
+        /* Ensure sections have margin for fixed header */
+        section {
+            scroll-margin-top: 5rem; /* Matches 20 (h-20) or 16 (h-16) header height */
+        }
+        @media (min-width: 768px) {
+            section {
+                scroll-margin-top: 6rem;
+            }
         }
         /* Custom scroll reveal initial states */
         .reveal-item {

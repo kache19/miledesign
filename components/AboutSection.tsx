@@ -13,7 +13,7 @@ const AboutSection: React.FC = () => {
             </h3>
             <div className="space-y-6 text-slate-600 text-lg leading-relaxed">
               <p>
-                Founded in 2008, Structura Design & Build was born from a simple realization: the spaces we inhabit fundamentally shape who we are. We bridge the gap between visionary architecture and uncompromising engineering.
+                Founded in 2008, MILEDESIGNS Design & Build was born from a simple realization: the spaces we inhabit fundamentally shape who we are. We bridge the gap between visionary architecture and uncompromising engineering.
               </p>
               <p>
                 Our team consists of award-winning architects, master craftsmen, and sustainability experts who believe that every blueprint is a promise of quality. We don't just follow industry standards; we set them through rigorous material selection and innovative construction technology.
@@ -52,7 +52,7 @@ const AboutSection: React.FC = () => {
           {[
             {
               title: "Innovation First",
-              desc: "Integrating AI-driven design tools and cutting-edge BIM modeling to eliminate construction inefficiencies before the first stone is laid.",
+              desc: "Integrating design tools and cutting-edge BIM modeling to eliminate construction inefficiencies before the first stone is laid.",
               icon: "💡"
             },
             {

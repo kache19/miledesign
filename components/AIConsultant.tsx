@@ -5,7 +5,7 @@ import { ChatMessage } from '../types';
 
 const AIConsultant: React.FC = () => {
   const [messages, setMessages] = useState<ChatMessage[]>([
-    { role: 'assistant', content: "Hello! I'm your Structura AI Architect. How can I assist with your design or construction project today?" }
+    { role: 'assistant', content: "Hello! I'm your MILEDESIGNS AI Architect. How can I assist with your design or construction project today?" }
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -42,7 +42,7 @@ const AIConsultant: React.FC = () => {
           🤖
         </div>
         <div>
-          <h3 className="text-white font-bold text-sm md:text-base tracking-tight">Structura AI Architect</h3>
+          <h3 className="text-white font-bold text-sm md:text-base tracking-tight">MILEDESIGNS AI Architect</h3>
           <p className="text-[10px] md:text-xs text-slate-400 font-medium">Online • Designing with Gemini</p>
         </div>
       </div>
