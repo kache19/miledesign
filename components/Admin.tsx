@@ -63,7 +63,6 @@ const Admin: React.FC<AdminProps> = ({ onClose, onDataUpdate }) => {
         setProjects([...projects, { ...editingItem, id: Date.now().toString() }]);
       }
     }
-    // Logic for services and testimonials could be expanded here
     setEditingItem(null);
   };
 
@@ -146,25 +145,25 @@ const Admin: React.FC<AdminProps> = ({ onClose, onDataUpdate }) => {
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 lg:mb-10 gap-4">
             <div>
               <h1 className="text-2xl md:text-3xl lg:text-4xl font-serif font-bold text-slate-900 capitalize leading-tight">Manage {activeTab}</h1>
-              <p className="text-slate-500 text-sm mt-1">Updates are saved to local memory until you Publish.</p>
+              <p className="text-slate-500 text-sm mt-1">Updates are saved to memory until you Publish.</p>
             </div>
             <button 
               onClick={() => startEdit(activeTab === 'projects' ? { title: '', category: 'Residential', location: '', tags: [], features: [], gallery: [], imageUrl: '', year: 2024, description: '' } : {})}
               className="w-full sm:w-auto bg-slate-900 text-white px-6 py-3 rounded-full text-xs font-bold hover:bg-slate-800 transition-all active:scale-95 shadow-lg"
             >
-              + Create New {activeTab.slice(0, -1)}
+              + Quick Add
             </button>
           </div>
 
           <div className="grid gap-3 lg:gap-4">
             {activeTab === 'projects' && (projects.length > 0 ? (
               projects.map(p => (
-                <div key={p.id} className="bg-white p-4 lg:p-6 rounded-2xl border border-slate-200 flex items-center justify-between shadow-sm group hover:shadow-md transition-all">
+                <div key={p.id} className="bg-white p-4 lg:p-5 rounded-2xl border border-slate-200 flex items-center justify-between shadow-sm group hover:shadow-md transition-all">
                   <div className="flex items-center space-x-3 lg:space-x-4">
-                    <img src={p.imageUrl} alt="" className="w-12 h-12 lg:w-16 lg:h-16 object-cover rounded-xl bg-slate-100" />
+                    <img src={p.imageUrl} alt="" className="w-12 h-12 lg:w-14 lg:h-14 object-cover rounded-xl bg-slate-100" />
                     <div className="min-w-0">
-                      <h3 className="font-bold text-slate-900 truncate text-sm lg:text-base">{p.title || 'Untitled Project'}</h3>
-                      <p className="text-[10px] lg:text-xs text-slate-500 uppercase tracking-widest truncate">{p.category} • {p.year}</p>
+                      <h3 className="font-bold text-slate-900 truncate text-sm lg:text-base">{p.title || 'Untitled'}</h3>
+                      <p className="text-[9px] lg:text-[10px] text-slate-500 uppercase tracking-widest truncate">{p.category} • {p.year}</p>
                     </div>
                   </div>
                   <div className="flex space-x-1 lg:space-x-2 shrink-0">
@@ -179,123 +178,110 @@ const Admin: React.FC<AdminProps> = ({ onClose, onDataUpdate }) => {
               ))
             ) : (
               <div className="text-center py-20 bg-white rounded-3xl border-2 border-dashed border-slate-200">
-                <p className="text-slate-400 font-medium">No {activeTab} found. Create your first entry!</p>
+                <p className="text-slate-400 font-medium">No projects found.</p>
               </div>
             ))}
             
             {activeTab !== 'projects' && (
               <div className="text-center py-20 bg-white rounded-3xl border border-slate-200">
-                <p className="text-slate-400 text-sm">Management for {activeTab} coming in the next update.</p>
+                <p className="text-slate-400 text-sm">Management for {activeTab} is limited in this view.</p>
               </div>
             )}
           </div>
         </div>
       </div>
 
-      {/* Edit Modal - Mobile Optimized */}
+      {/* Optimized & Reduced Edit Modal */}
       {editingItem && (
-        <div className="fixed inset-0 z-[110] bg-slate-950/50 backdrop-blur-md flex items-center justify-center p-0 sm:p-4">
-          <div className="bg-white w-full h-full sm:h-auto sm:max-w-2xl sm:rounded-[2rem] shadow-2xl flex flex-col animate-in slide-in-from-bottom sm:slide-in-from-bottom-0 sm:zoom-in-95 duration-300">
-            <div className="p-5 lg:p-8 border-b border-slate-100 flex justify-between items-center shrink-0">
-              <h2 className="text-xl lg:text-2xl font-serif font-bold">Edit {activeTab.slice(0, -1)}</h2>
-              <button onClick={() => setEditingItem(null)} className="text-slate-400 hover:text-slate-900 transition-colors p-2">
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+        <div className="fixed inset-0 z-[110] bg-slate-950/40 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white w-full max-w-xl rounded-[1.5rem] shadow-2xl flex flex-col animate-in zoom-in-95 duration-200">
+            <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center shrink-0">
+              <h2 className="text-lg font-serif font-bold">Project Details</h2>
+              <button onClick={() => setEditingItem(null)} className="text-slate-400 hover:text-slate-900 p-1">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
               </button>
             </div>
             
-            <form onSubmit={handleEditSubmit} className="flex-1 overflow-y-auto p-5 lg:p-8 space-y-5 lg:space-y-6">
-              {activeTab === 'projects' && (
-                <>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    <div>
-                      <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Title</label>
-                      <input 
-                        type="text" 
-                        required
-                        value={editingItem.title} 
-                        onChange={e => setEditingItem({...editingItem, title: e.target.value})}
-                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-amber-500/20 outline-none"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Location</label>
-                      <input 
-                        type="text" 
-                        required
-                        value={editingItem.location} 
-                        onChange={e => setEditingItem({...editingItem, location: e.target.value})}
-                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-amber-500/20 outline-none"
-                      />
-                    </div>
-                  </div>
-                  
-                  <div className="grid grid-cols-2 gap-5">
-                    <div>
-                      <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Category</label>
-                      <select 
-                        value={editingItem.category}
-                        onChange={e => setEditingItem({...editingItem, category: e.target.value})}
-                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-amber-500/20 outline-none"
-                      >
-                        <option value="Residential">Residential</option>
-                        <option value="Commercial">Commercial</option>
-                        <option value="Industrial">Industrial</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Completion Year</label>
-                      <input 
-                        type="number" 
-                        required
-                        value={editingItem.year} 
-                        onChange={e => setEditingItem({...editingItem, year: parseInt(e.target.value) || 2024})}
-                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-amber-500/20 outline-none"
-                      />
-                    </div>
-                  </div>
+            <form onSubmit={handleEditSubmit} className="flex-1 p-6 space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5">Project Title</label>
+                  <input 
+                    type="text" required
+                    value={editingItem.title} 
+                    onChange={e => setEditingItem({...editingItem, title: e.target.value})}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:border-amber-500 outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5">Location</label>
+                  <input 
+                    type="text" required
+                    value={editingItem.location} 
+                    onChange={e => setEditingItem({...editingItem, location: e.target.value})}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:border-amber-500 outline-none"
+                  />
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5">Category</label>
+                  <select 
+                    value={editingItem.category}
+                    onChange={e => setEditingItem({...editingItem, category: e.target.value})}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-2 text-xs outline-none"
+                  >
+                    <option value="Residential">Resi</option>
+                    <option value="Commercial">Comm</option>
+                    <option value="Industrial">Indus</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5">Year</label>
+                  <input 
+                    type="number" required
+                    value={editingItem.year} 
+                    onChange={e => setEditingItem({...editingItem, year: parseInt(e.target.value) || 2024})}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5">Tags</label>
+                  <input 
+                    type="text" placeholder="Tag1, Tag2"
+                    value={editingItem.tags?.join(', ')} 
+                    onChange={e => setEditingItem({...editingItem, tags: e.target.value.split(',').map(s => s.trim()).filter(s => s !== '')})}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs outline-none"
+                  />
+                </div>
+              </div>
 
-                  <div>
-                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Main Image URL</label>
-                    <input 
-                      type="url" 
-                      required
-                      placeholder="https://images.unsplash.com/..."
-                      value={editingItem.imageUrl} 
-                      onChange={e => setEditingItem({...editingItem, imageUrl: e.target.value})}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-amber-500/20 outline-none"
-                    />
-                  </div>
+              <div>
+                <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5">Image URL</label>
+                <input 
+                  type="url" required
+                  value={editingItem.imageUrl} 
+                  onChange={e => setEditingItem({...editingItem, imageUrl: e.target.value})}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs outline-none"
+                />
+              </div>
 
-                  <div>
-                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Project Description</label>
-                    <textarea 
-                      rows={4}
-                      required
-                      value={editingItem.description} 
-                      onChange={e => setEditingItem({...editingItem, description: e.target.value})}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-amber-500/20 outline-none resize-none"
-                      placeholder="Write a brief overview of the project highlights and design philosophy..."
-                    />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Tags (Comma Separated)</label>
-                    <input 
-                      type="text" 
-                      placeholder="Sustainable, Luxury, Timber"
-                      value={editingItem.tags?.join(', ')} 
-                      onChange={e => setEditingItem({...editingItem, tags: e.target.value.split(',').map(s => s.trim()).filter(s => s !== '')})}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-amber-500/20 outline-none"
-                    />
-                  </div>
-                </>
-              )}
+              <div>
+                <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5">Brief Description</label>
+                <textarea 
+                  rows={3} required
+                  value={editingItem.description} 
+                  onChange={e => setEditingItem({...editingItem, description: e.target.value})}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none resize-none"
+                />
+              </div>
             </form>
             
-            <div className="p-5 lg:p-8 bg-slate-50 border-t border-slate-100 flex flex-col sm:flex-row justify-end gap-3 shrink-0">
-              <button onClick={() => setEditingItem(null)} className="order-2 sm:order-1 px-6 py-3 text-sm font-bold text-slate-500 hover:text-slate-900 transition-colors">Discard Changes</button>
-              <button onClick={handleEditSubmit} className="order-1 sm:order-2 px-8 py-3 bg-slate-900 text-white rounded-full text-sm font-bold shadow-xl shadow-slate-900/10 hover:bg-slate-800 transition-all active:scale-95">
-                Save & Continue
+            <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-2 shrink-0">
+              <button onClick={() => setEditingItem(null)} className="px-4 py-2 text-xs font-bold text-slate-400 hover:text-slate-600">Close</button>
+              <button onClick={handleEditSubmit} className="px-6 py-2 bg-slate-900 text-white rounded-lg text-xs font-bold active:scale-95 shadow-lg">
+                Save
               </button>
             </div>
           </div>
