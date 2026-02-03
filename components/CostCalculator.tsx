@@ -18,10 +18,10 @@ const CostCalculator: React.FC = () => {
   const totalCost = area * rates[quality] * multiplier;
 
   const data: CostEstimate[] = useMemo(() => [
-    { category: 'Materials', value: totalCost * 0.45, color: '#0f172a' },
-    { category: 'Labor', value: totalCost * 0.35, color: '#d97706' },
-    { category: 'Permits & Design', value: totalCost * 0.12, color: '#64748b' },
-    { category: 'Contingency', value: totalCost * 0.08, color: '#94a3b8' }
+    { category: 'Materials', value: totalCost * 0.45, color: '#E27254' }, // Terracotta
+    { category: 'Labor', value: totalCost * 0.35, color: '#87CEBB' },    // Sky Blue
+    { category: 'Permits & Design', value: totalCost * 0.12, color: '#8FBC8F' }, // Sage Green
+    { category: 'Contingency', value: totalCost * 0.08, color: '#cbd5e1' } // Light Slate
   ], [totalCost]);
 
   return (
@@ -34,12 +34,12 @@ const CostCalculator: React.FC = () => {
           <div>
             <div className="flex justify-between items-center mb-3">
               <label className="text-sm font-bold text-slate-700 uppercase tracking-wider">Total Area</label>
-              <span className="text-amber-600 font-bold">{area.toLocaleString()} sq. ft.</span>
+              <span className="text-terracotta font-bold">{area.toLocaleString()} sq. ft.</span>
             </div>
             <input 
               type="range" min="500" max="10000" step="100" 
               value={area} onChange={(e) => setArea(parseInt(e.target.value))}
-              className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-amber-600"
+              className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-terracotta"
             />
           </div>
 
@@ -66,7 +66,7 @@ const CostCalculator: React.FC = () => {
                   <button
                     key={q}
                     onClick={() => setQuality(q as any)}
-                    className={`flex-1 py-2 px-2 rounded-lg text-[10px] sm:text-xs font-bold transition-all ${quality === q ? 'bg-amber-600 text-white shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                    className={`flex-1 py-2 px-2 rounded-lg text-[10px] sm:text-xs font-bold transition-all ${quality === q ? 'bg-skyblue text-white shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
                   >
                     {q}
                   </button>
@@ -77,7 +77,7 @@ const CostCalculator: React.FC = () => {
 
           <div className="pt-8 border-t border-slate-100">
             <div className="text-slate-400 text-xs mb-1 uppercase tracking-[0.2em] font-bold">Estimated Investment</div>
-            <div className="text-4xl md:text-5xl font-serif font-bold text-slate-900">
+            <div className="text-4xl md:text-5xl font-serif font-bold text-terracotta">
               ${totalCost.toLocaleString(undefined, { maximumFractionDigits: 0 })}
             </div>
           </div>

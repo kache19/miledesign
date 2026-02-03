@@ -39,7 +39,7 @@ const Navigation: React.FC<NavigationProps> = ({ onNavClick }) => {
               className="flex items-center space-x-2 transition-colors duration-300 group outline-none"
             >
               <span className={`text-xl md:text-2xl font-serif font-bold tracking-tight transition-colors ${
-                isMenuOpen ? 'text-white' : 'text-slate-900 group-hover:text-amber-600'
+                isMenuOpen ? 'text-white' : 'text-slate-900 group-hover:text-terracotta'
               }`}>
                 MILEDESIGNS
               </span>
@@ -59,7 +59,7 @@ const Navigation: React.FC<NavigationProps> = ({ onNavClick }) => {
                 <button
                   key={link.id}
                   onClick={() => handleNavClick(link.id)}
-                  className="hover:text-amber-600 transition-colors py-2"
+                  className="hover:text-terracotta transition-colors py-2"
                 >
                   {link.name}
                 </button>
@@ -72,7 +72,7 @@ const Navigation: React.FC<NavigationProps> = ({ onNavClick }) => {
                 onClick={() => handleNavClick('contact')} 
                 className={`hidden sm:block px-6 py-2.5 rounded-full text-sm font-bold transition-all shadow-lg ${
                   isMenuOpen 
-                    ? 'bg-amber-600 text-white hover:bg-amber-500' 
+                    ? 'bg-terracotta text-white hover:bg-terracotta-hover' 
                     : 'bg-slate-900 text-white hover:bg-slate-800 shadow-slate-900/10'
                 }`}
               >
@@ -115,7 +115,7 @@ const Navigation: React.FC<NavigationProps> = ({ onNavClick }) => {
               <button
                 key={link.id}
                 onClick={() => handleNavClick(link.id)}
-                className="group w-full max-w-xs py-4 text-2xl md:text-3xl font-serif font-bold text-white hover:text-amber-400 transition-colors relative"
+                className="group w-full max-w-xs py-4 text-2xl md:text-3xl font-serif font-bold text-white hover:text-skyblue transition-colors relative"
               >
                 <span className="relative z-10">{link.name}</span>
                 <div className="absolute inset-0 bg-white/5 rounded-2xl scale-95 opacity-0 group-active:opacity-100 group-active:scale-100 transition-all"></div>
@@ -124,7 +124,7 @@ const Navigation: React.FC<NavigationProps> = ({ onNavClick }) => {
             <div className="w-full max-w-xs pt-6 border-t border-slate-800">
               <button 
                 onClick={() => handleNavClick('contact')}
-                className="w-full bg-amber-600 text-white px-10 py-4 rounded-2xl text-lg font-bold shadow-2xl shadow-amber-600/20 active:scale-95 transition-transform"
+                className="w-full bg-terracotta text-white px-10 py-4 rounded-2xl text-lg font-bold shadow-2xl shadow-terracotta/20 active:scale-95 transition-transform"
               >
                 Start Inquiry
               </button>

@@ -75,12 +75,12 @@ const Admin: React.FC<AdminProps> = ({ onClose, onDataUpdate }) => {
             <input 
               type="password" 
               placeholder="Enter Master Password" 
-              className="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-amber-500 outline-none transition-all"
+              className="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-terracotta outline-none transition-all"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               autoFocus
             />
-            <button className="w-full bg-amber-600 text-white font-bold py-3 rounded-xl hover:bg-amber-500 transition-colors active:scale-[0.98]">
+            <button className="w-full bg-terracotta text-white font-bold py-3 rounded-xl hover:bg-terracotta-hover transition-colors active:scale-[0.98]">
               Unlock Dashboard
             </button>
             <button type="button" onClick={onClose} className="w-full text-slate-500 text-sm py-2 hover:text-white transition-colors">
@@ -95,11 +95,11 @@ const Admin: React.FC<AdminProps> = ({ onClose, onDataUpdate }) => {
 
   return (
     <div className="fixed inset-0 z-[100] bg-slate-50 flex flex-col lg:flex-row overflow-hidden animate-in fade-in duration-300">
-      {/* Sidebar / Top Nav for Mobile */}
+      {/* Sidebar */}
       <div className="w-full lg:w-64 bg-slate-900 text-white p-4 lg:p-6 flex flex-col border-b lg:border-b-0 lg:border-r border-slate-800 shrink-0">
         <div className="flex items-center justify-between lg:block lg:mb-10">
           <div className="text-xl font-serif font-bold tracking-tighter">
-            MILEDESIGNS <span className="text-amber-500">Admin</span>
+            MILEDESIGNS <span className="text-terracotta">Admin</span>
           </div>
           <button onClick={onClose} className="lg:hidden p-2 text-slate-400">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
@@ -112,7 +112,7 @@ const Admin: React.FC<AdminProps> = ({ onClose, onDataUpdate }) => {
               key={tab}
               onClick={() => setActiveTab(tab)}
               className={`whitespace-nowrap lg:w-full text-left px-4 py-2.5 lg:py-3 rounded-xl text-[10px] lg:text-xs font-bold uppercase tracking-widest transition-all ${
-                activeTab === tab ? 'bg-amber-600 text-white shadow-lg shadow-amber-600/20' : 'text-slate-400 hover:bg-white/5'
+                activeTab === tab ? 'bg-terracotta text-white shadow-lg' : 'text-slate-400 hover:bg-white/5'
               }`}
             >
               {tab}
@@ -121,7 +121,7 @@ const Admin: React.FC<AdminProps> = ({ onClose, onDataUpdate }) => {
         </nav>
 
         <div className="hidden lg:block pt-6 border-t border-slate-800 space-y-3">
-          <button onClick={saveAll} className="w-full bg-green-600 text-white py-3 rounded-xl font-bold text-sm hover:bg-green-500 transition-colors">
+          <button onClick={saveAll} className="w-full bg-sagegreen text-white py-3 rounded-xl font-bold text-sm hover:bg-sagegreen-hover transition-colors">
             Publish Changes
           </button>
           <button onClick={() => storageService.reset()} className="w-full bg-red-600/20 text-red-500 py-3 rounded-xl font-bold text-sm hover:bg-red-600 hover:text-white transition-all">
@@ -133,23 +133,16 @@ const Admin: React.FC<AdminProps> = ({ onClose, onDataUpdate }) => {
         </div>
       </div>
 
-      {/* Mobile Actions Bar */}
-      <div className="lg:hidden bg-white border-b border-slate-200 px-4 py-3 flex gap-2">
-        <button onClick={saveAll} className="flex-1 bg-green-600 text-white py-2 rounded-lg font-bold text-[10px] uppercase tracking-wider">Save</button>
-        <button onClick={() => storageService.reset()} className="flex-1 bg-red-50 text-red-600 py-2 rounded-lg font-bold text-[10px] uppercase tracking-wider">Reset</button>
-      </div>
-
       {/* Main Content Area */}
       <div className="flex-1 overflow-y-auto p-4 md:p-8 lg:p-12 bg-slate-50">
         <div className="max-w-5xl mx-auto">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 lg:mb-10 gap-4">
             <div>
               <h1 className="text-2xl md:text-3xl lg:text-4xl font-serif font-bold text-slate-900 capitalize leading-tight">Manage {activeTab}</h1>
-              <p className="text-slate-500 text-sm mt-1">Updates are saved to memory until you Publish.</p>
             </div>
             <button 
               onClick={() => startEdit(activeTab === 'projects' ? { title: '', category: 'Residential', location: '', tags: [], features: [], gallery: [], imageUrl: '', year: 2024, description: '' } : {})}
-              className="w-full sm:w-auto bg-slate-900 text-white px-6 py-3 rounded-full text-xs font-bold hover:bg-slate-800 transition-all active:scale-95 shadow-lg"
+              className="w-full sm:w-auto bg-terracotta text-white px-6 py-3 rounded-full text-xs font-bold hover:bg-terracotta-hover transition-all active:scale-95 shadow-lg"
             >
               + Quick Add
             </button>
@@ -163,11 +156,11 @@ const Admin: React.FC<AdminProps> = ({ onClose, onDataUpdate }) => {
                     <img src={p.imageUrl} alt="" className="w-12 h-12 lg:w-14 lg:h-14 object-cover rounded-xl bg-slate-100" />
                     <div className="min-w-0">
                       <h3 className="font-bold text-slate-900 truncate text-sm lg:text-base">{p.title || 'Untitled'}</h3>
-                      <p className="text-[9px] lg:text-[10px] text-slate-500 uppercase tracking-widest truncate">{p.category} • {p.year}</p>
+                      <p className="text-[9px] lg:text-[10px] text-terracotta uppercase tracking-widest truncate">{p.category} • {p.year}</p>
                     </div>
                   </div>
                   <div className="flex space-x-1 lg:space-x-2 shrink-0">
-                    <button onClick={() => startEdit(p)} className="p-2 text-slate-400 hover:text-amber-600 transition-colors">
+                    <button onClick={() => startEdit(p)} className="p-2 text-slate-400 hover:text-terracotta transition-colors">
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
                     </button>
                     <button onClick={() => deleteItem(p.id)} className="p-2 text-slate-400 hover:text-red-600 transition-colors">
@@ -181,22 +174,16 @@ const Admin: React.FC<AdminProps> = ({ onClose, onDataUpdate }) => {
                 <p className="text-slate-400 font-medium">No projects found.</p>
               </div>
             ))}
-            
-            {activeTab !== 'projects' && (
-              <div className="text-center py-20 bg-white rounded-3xl border border-slate-200">
-                <p className="text-slate-400 text-sm">Management for {activeTab} is limited in this view.</p>
-              </div>
-            )}
           </div>
         </div>
       </div>
 
-      {/* Optimized & Reduced Edit Modal */}
+      {/* Edit Modal */}
       {editingItem && (
         <div className="fixed inset-0 z-[110] bg-slate-950/40 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-white w-full max-w-xl rounded-[1.5rem] shadow-2xl flex flex-col animate-in zoom-in-95 duration-200">
             <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center shrink-0">
-              <h2 className="text-lg font-serif font-bold">Project Details</h2>
+              <h2 className="text-lg font-serif font-bold text-terracotta">Project Details</h2>
               <button onClick={() => setEditingItem(null)} className="text-slate-400 hover:text-slate-900 p-1">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
               </button>
@@ -210,7 +197,7 @@ const Admin: React.FC<AdminProps> = ({ onClose, onDataUpdate }) => {
                     type="text" required
                     value={editingItem.title} 
                     onChange={e => setEditingItem({...editingItem, title: e.target.value})}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:border-amber-500 outline-none"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:border-terracotta outline-none"
                   />
                 </div>
                 <div>
@@ -219,7 +206,7 @@ const Admin: React.FC<AdminProps> = ({ onClose, onDataUpdate }) => {
                     type="text" required
                     value={editingItem.location} 
                     onChange={e => setEditingItem({...editingItem, location: e.target.value})}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:border-amber-500 outline-none"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:border-terracotta outline-none"
                   />
                 </div>
               </div>
@@ -230,7 +217,7 @@ const Admin: React.FC<AdminProps> = ({ onClose, onDataUpdate }) => {
                   <select 
                     value={editingItem.category}
                     onChange={e => setEditingItem({...editingItem, category: e.target.value})}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-2 text-xs outline-none"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-2 text-xs outline-none focus:border-terracotta"
                   >
                     <option value="Residential">Resi</option>
                     <option value="Commercial">Comm</option>
@@ -243,7 +230,7 @@ const Admin: React.FC<AdminProps> = ({ onClose, onDataUpdate }) => {
                     type="number" required
                     value={editingItem.year} 
                     onChange={e => setEditingItem({...editingItem, year: parseInt(e.target.value) || 2024})}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-terracotta"
                   />
                 </div>
                 <div>
@@ -252,7 +239,7 @@ const Admin: React.FC<AdminProps> = ({ onClose, onDataUpdate }) => {
                     type="text" placeholder="Tag1, Tag2"
                     value={editingItem.tags?.join(', ')} 
                     onChange={e => setEditingItem({...editingItem, tags: e.target.value.split(',').map(s => s.trim()).filter(s => s !== '')})}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs outline-none"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs outline-none focus:border-terracotta"
                   />
                 </div>
               </div>
@@ -263,7 +250,7 @@ const Admin: React.FC<AdminProps> = ({ onClose, onDataUpdate }) => {
                   type="url" required
                   value={editingItem.imageUrl} 
                   onChange={e => setEditingItem({...editingItem, imageUrl: e.target.value})}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs outline-none"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs outline-none focus:border-terracotta"
                 />
               </div>
 
@@ -273,14 +260,14 @@ const Admin: React.FC<AdminProps> = ({ onClose, onDataUpdate }) => {
                   rows={3} required
                   value={editingItem.description} 
                   onChange={e => setEditingItem({...editingItem, description: e.target.value})}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none resize-none"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none resize-none focus:border-terracotta"
                 />
               </div>
             </form>
             
             <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-2 shrink-0">
               <button onClick={() => setEditingItem(null)} className="px-4 py-2 text-xs font-bold text-slate-400 hover:text-slate-600">Close</button>
-              <button onClick={handleEditSubmit} className="px-6 py-2 bg-slate-900 text-white rounded-lg text-xs font-bold active:scale-95 shadow-lg">
+              <button onClick={handleEditSubmit} className="px-6 py-2 bg-terracotta text-white rounded-lg text-xs font-bold active:scale-95 shadow-lg shadow-terracotta/20">
                 Save
               </button>
             </div>

@@ -145,7 +145,7 @@ const App: React.FC = () => {
         onClick={() => setFullScreenImage(null)}
       >
         <button 
-          className="absolute top-4 right-4 md:top-6 md:right-6 text-white hover:text-amber-500 transition-colors z-[110] bg-white/5 p-2 rounded-full"
+          className="absolute top-4 right-4 md:top-6 md:right-6 text-white hover:text-terracotta transition-colors z-[110] bg-white/5 p-2 rounded-full"
           onClick={() => setFullScreenImage(null)}
         >
           <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -165,7 +165,7 @@ const App: React.FC = () => {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center">
-        <div className="w-16 h-16 border-4 border-amber-600/20 border-t-amber-600 rounded-full animate-spin mb-6"></div>
+        <div className="w-16 h-16 border-4 border-terracotta/20 border-t-terracotta rounded-full animate-spin mb-6"></div>
         <div className="text-white font-serif text-2xl animate-pulse tracking-tighter">MILEDESIGNS</div>
       </div>
     );
@@ -179,7 +179,7 @@ const App: React.FC = () => {
         <div className="pt-20 pb-16 md:pt-32 md:pb-32 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <button 
             onClick={closeProjectDetails}
-            className="group mb-6 md:mb-8 flex items-center text-slate-500 hover:text-amber-600 transition-colors font-bold text-[10px] md:text-sm uppercase tracking-widest"
+            className="group mb-6 md:mb-8 flex items-center text-slate-500 hover:text-terracotta transition-colors font-bold text-[10px] md:text-sm uppercase tracking-widest"
           >
             <svg className="w-4 h-4 md:w-5 md:h-5 mr-2 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -234,17 +234,17 @@ const App: React.FC = () => {
             <div className="pt-2 lg:pt-0">
               <div className="flex flex-wrap gap-2 mb-4 md:mb-6">
                 {selectedProject.tags.map(tag => (
-                  <span key={tag} className="px-3 py-1 bg-amber-600/10 text-amber-600 text-[9px] md:text-[10px] font-bold uppercase tracking-widest rounded-full">
+                  <span key={tag} className="px-3 py-1 bg-skyblue/10 text-skyblue font-bold text-[9px] md:text-[10px] uppercase tracking-widest rounded-full">
                     {tag}
                   </span>
                 ))}
               </div>
-              <span className="inline-block px-4 py-1.5 bg-slate-900 text-white text-[9px] md:text-[10px] font-bold uppercase tracking-[0.3em] rounded-full mb-4 md:mb-6">
+              <span className="inline-block px-4 py-1.5 bg-terracotta text-white text-[9px] md:text-[10px] font-bold uppercase tracking-[0.3em] rounded-full mb-4 md:mb-6">
                 {selectedProject.category} • {selectedProject.year}
               </span>
               <h1 className="text-3xl md:text-5xl lg:text-6xl font-serif font-bold text-slate-900 mb-4 md:mb-6 leading-tight">{selectedProject.title}</h1>
               <div className="flex items-center text-slate-500 mb-8 md:mb-10 font-medium text-sm md:text-base">
-                <svg className="w-4 h-4 md:w-5 md:h-5 mr-2 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 md:w-5 md:h-5 mr-2 text-sagegreen" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
@@ -261,7 +261,7 @@ const App: React.FC = () => {
                   <div className="grid sm:grid-cols-2 gap-y-4 gap-x-10">
                     {selectedProject.features.map((feature, idx) => (
                       <div key={idx} className="flex items-start text-slate-700">
-                        <div className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-amber-500 mt-1.5 mr-3 md:mr-4 shrink-0"></div>
+                        <div className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-skyblue mt-1.5 mr-3 md:mr-4 shrink-0"></div>
                         <span className="font-semibold text-xs md:text-sm leading-snug">{feature}</span>
                       </div>
                     ))}
@@ -270,12 +270,12 @@ const App: React.FC = () => {
               )}
 
               <div className="mt-12 md:mt-16 p-6 md:p-10 bg-slate-900 rounded-2xl md:rounded-[2.5rem] text-white shadow-2xl relative overflow-hidden group">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-amber-600/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:bg-amber-600/20 transition-colors"></div>
+                <div className="absolute top-0 right-0 w-32 h-32 bg-terracotta/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:bg-terracotta/20 transition-colors"></div>
                 <h4 className="text-xl md:text-2xl font-serif font-bold mb-3 md:mb-4 relative z-10">Start your project</h4>
                 <p className="text-slate-400 mb-8 md:mb-10 text-[11px] md:text-sm leading-relaxed relative z-10">Our architectural experts are ready to draft your vision into reality. Let's discuss requirements and feasibility today.</p>
                 <button 
                   onClick={() => scrollTo('contact')}
-                  className="w-full py-4 bg-amber-600 text-white rounded-xl md:rounded-2xl font-bold hover:bg-amber-500 transition-all shadow-xl shadow-amber-600/10 active:scale-95 text-xs md:text-base"
+                  className="w-full py-4 bg-terracotta text-white rounded-xl md:rounded-2xl font-bold hover:bg-terracotta-hover transition-all shadow-xl shadow-terracotta/10 active:scale-95 text-xs md:text-base"
                 >
                   Consult an Architect
                 </button>
@@ -317,13 +317,13 @@ const App: React.FC = () => {
         <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-10 pb-32">
           <div className="max-w-4xl">
             <div className="inline-flex items-center space-x-3 mb-6 md:mb-8 reveal-item">
-              <span className="h-px w-6 md:w-8 bg-amber-600"></span>
-              <span className="text-amber-500 text-[9px] md:text-xs font-bold uppercase tracking-[0.4em]">Multi-Disciplinary Design</span>
+              <span className="h-px w-6 md:w-8 bg-terracotta"></span>
+              <span className="text-terracotta text-[9px] md:text-xs font-bold uppercase tracking-[0.4em]">Multi-Disciplinary Design</span>
             </div>
             
             <h1 className="text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-serif font-bold text-white mb-6 md:mb-8 leading-[1.1] reveal-item">
               Architecture that <br className="hidden sm:block" />
-              <span className="text-amber-500 italic">Transcends</span> Function.
+              <span className="text-terracotta italic">Transcends</span> Function.
             </h1>
             
             <p className="text-base md:text-xl lg:text-2xl text-slate-300 mb-8 md:mb-12 max-w-2xl leading-relaxed font-light reveal-item">
@@ -333,10 +333,10 @@ const App: React.FC = () => {
             <div className="flex flex-col sm:flex-row gap-4 md:gap-6 reveal-item">
               <button 
                 onClick={() => scrollTo('portfolio')}
-                className="group relative bg-amber-600 text-white px-8 py-4 md:px-10 md:py-5 rounded-full font-bold text-sm md:text-lg overflow-hidden transition-all shadow-2xl active:scale-95 text-center"
+                className="group relative bg-terracotta text-white px-8 py-4 md:px-10 md:py-5 rounded-full font-bold text-sm md:text-lg overflow-hidden transition-all shadow-2xl active:scale-95 text-center"
               >
                 <span className="relative z-10">Our Portfolio</span>
-                <div className="absolute inset-0 bg-amber-700 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+                <div className="absolute inset-0 bg-terracotta-hover translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
               </button>
               
               <button 
@@ -351,26 +351,6 @@ const App: React.FC = () => {
             </div>
           </div>
         </div>
-
-        {/* Floating Quick Stats Card - Hidden on Mobile */}
-        <div className="hidden lg:block absolute bottom-28 right-8 z-30 reveal-item">
-          <div className="bg-white/5 backdrop-blur-2xl border border-white/10 p-6 rounded-[2rem] shadow-2xl w-64">
-            <div className="flex justify-between items-start mb-4">
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Real-time Pulse</span>
-              <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-            </div>
-            <div className="space-y-4">
-              <div>
-                <div className="text-2xl font-serif font-bold text-white">12</div>
-                <div className="text-[10px] text-slate-500 uppercase tracking-wider font-bold">Active Build Sites</div>
-              </div>
-              <div>
-                <div className="text-2xl font-serif font-bold text-white">09</div>
-                <div className="text-[10px] text-slate-500 uppercase tracking-wider font-bold">In Design Phase</div>
-              </div>
-            </div>
-          </div>
-        </div>
       </section>
 
       {/* About Section */}
@@ -380,18 +360,18 @@ const App: React.FC = () => {
       <section id="services" className="py-16 md:py-32 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12 md:mb-20">
-            <h2 className="text-[10px] md:text-sm font-bold text-amber-600 uppercase tracking-[0.3em] mb-3 md:mb-4">Core Disciplines</h2>
+            <h2 className="text-[10px] md:text-sm font-bold text-sagegreen uppercase tracking-[0.3em] mb-3 md:mb-4">Core Disciplines</h2>
             <h3 className="text-2xl md:text-5xl font-serif font-bold text-slate-900 leading-tight">Mastering Form & Function</h3>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
             {services.map((service) => (
-              <div key={service.id} className="group relative bg-slate-50 rounded-2xl md:rounded-[2rem] p-6 md:p-10 hover:bg-slate-900 transition-all duration-700 cursor-default flex flex-col border border-slate-100 hover:border-slate-800 reveal-item">
+              <div key={service.id} className="group relative bg-slate-50 rounded-2xl md:rounded-[2rem] p-6 md:p-10 hover:bg-terracotta transition-all duration-700 cursor-default flex flex-col border border-slate-100 hover:border-terracotta reveal-item">
                 <div className="text-4xl md:text-5xl mb-6 md:mb-8 group-hover:scale-110 transition-transform duration-500">{service.icon}</div>
                 <h4 className="text-lg md:text-2xl font-serif font-bold mb-3 md:mb-4 text-slate-900 group-hover:text-white">{service.title}</h4>
-                <p className="text-slate-600 text-sm md:text-base group-hover:text-slate-400 transition-colors leading-relaxed mb-6 md:mb-8 flex-1">
+                <p className="text-slate-600 text-sm md:text-base group-hover:text-terracotta-light transition-colors leading-relaxed mb-6 md:mb-8 flex-1">
                   {service.description}
                 </p>
-                <div className="flex items-center text-amber-600 font-bold text-[10px] md:text-xs uppercase tracking-widest group-hover:translate-x-2 transition-transform">
+                <div className="flex items-center text-terracotta font-bold text-[10px] md:text-xs uppercase tracking-widest group-hover:text-white group-hover:translate-x-2 transition-all">
                   Learn Process
                   <svg className="w-3 h-3 md:w-4 md:h-4 ml-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
                 </div>
@@ -406,7 +386,7 @@ const App: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col xl:flex-row xl:items-end justify-between mb-10 md:mb-16 gap-6 md:gap-10">
             <div className="max-w-2xl">
-              <h2 className="text-[10px] md:text-sm font-bold text-amber-600 uppercase tracking-[0.4em] mb-3 md:mb-4">Showcase</h2>
+              <h2 className="text-[10px] md:text-sm font-bold text-terracotta uppercase tracking-[0.4em] mb-3 md:mb-4">Showcase</h2>
               <h3 className="text-2xl md:text-5xl font-serif font-bold text-slate-900 leading-tight">Legacy Builds</h3>
             </div>
             
@@ -418,8 +398,8 @@ const App: React.FC = () => {
                     onClick={() => setActiveFilter(tag)}
                     className={`px-3 py-2 md:px-5 md:py-2.5 rounded-full text-[9px] md:text-xs font-bold uppercase tracking-widest transition-all ${
                       activeFilter === tag 
-                      ? 'bg-slate-900 text-white shadow-xl' 
-                      : 'bg-white text-slate-600 border border-slate-200 hover:border-amber-600'
+                      ? 'bg-terracotta text-white shadow-xl' 
+                      : 'bg-white text-slate-600 border border-slate-200 hover:border-terracotta'
                     }`}
                   >
                     {tag}
@@ -431,13 +411,13 @@ const App: React.FC = () => {
                 <div className="flex space-x-2 shrink-0">
                   <button 
                     onClick={prevSlide}
-                    className="w-10 h-10 md:w-14 md:h-14 rounded-full bg-white border border-slate-200 flex items-center justify-center hover:bg-slate-900 hover:border-slate-900 hover:text-white transition-all text-slate-600 shadow-sm"
+                    className="w-10 h-10 md:w-14 md:h-14 rounded-full bg-white border border-slate-200 flex items-center justify-center hover:bg-skyblue hover:border-skyblue hover:text-white transition-all text-slate-600 shadow-sm"
                   >
                     <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" /></svg>
                   </button>
                   <button 
                     onClick={nextSlide}
-                    className="w-10 h-10 md:w-14 md:h-14 rounded-full bg-white border border-slate-200 flex items-center justify-center hover:bg-slate-900 hover:border-slate-900 hover:text-white transition-all text-slate-600 shadow-sm"
+                    className="w-10 h-10 md:w-14 md:h-14 rounded-full bg-white border border-slate-200 flex items-center justify-center hover:bg-skyblue hover:border-skyblue hover:text-white transition-all text-slate-600 shadow-sm"
                   >
                     <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" /></svg>
                   </button>
@@ -466,11 +446,11 @@ const App: React.FC = () => {
                           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 ease-out"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent opacity-90 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-6 md:p-10">
-                          <span className="text-white/60 text-[9px] md:text-[10px] font-bold uppercase tracking-[0.3em] mb-1 md:mb-2">{project.category} • {project.year}</span>
+                          <span className="text-skyblue text-[9px] md:text-[10px] font-bold uppercase tracking-[0.3em] mb-1 md:mb-2">{project.category} • {project.year}</span>
                           <h4 className="text-xl md:text-3xl font-serif font-bold text-white mb-2 md:mb-3">{project.title}</h4>
                           <div className="flex items-center text-slate-300 text-[10px] md:text-sm">
                             <span className="mr-4 md:mr-6">{project.location}</span>
-                            <span className="hidden sm:inline-block px-4 py-1.5 bg-white/10 text-[8px] md:text-[9px] font-bold uppercase tracking-widest rounded-full border border-white/10">View Details</span>
+                            <span className="hidden sm:inline-block px-4 py-1.5 bg-terracotta text-[8px] md:text-[9px] font-bold uppercase tracking-widest rounded-full border border-white/10">View Details</span>
                           </div>
                         </div>
                       </div>
@@ -489,7 +469,7 @@ const App: React.FC = () => {
                   <button
                     key={idx}
                     onClick={() => setCurrentSlide(idx)}
-                    className={`h-1 md:h-1.5 transition-all duration-500 rounded-full ${currentSlide === idx ? 'w-8 md:w-12 bg-amber-600' : 'w-2 md:w-3 bg-slate-300'}`}
+                    className={`h-1 md:h-1.5 transition-all duration-500 rounded-full ${currentSlide === idx ? 'w-8 md:w-12 bg-terracotta' : 'w-2 md:w-3 bg-slate-300'}`}
                   />
                 ))}
               </div>
@@ -502,7 +482,7 @@ const App: React.FC = () => {
       <section id="testimonials" className="py-16 md:py-32 bg-white relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12 md:mb-24">
-            <h2 className="text-[10px] md:text-sm font-bold text-amber-600 uppercase tracking-[0.4em] mb-3 md:mb-4">Voices</h2>
+            <h2 className="text-[10px] md:text-sm font-bold text-skyblue uppercase tracking-[0.4em] mb-3 md:mb-4">Voices</h2>
             <h3 className="text-2xl md:text-5xl font-serif font-bold text-slate-900">Client Perspectives</h3>
           </div>
           
@@ -513,7 +493,7 @@ const App: React.FC = () => {
                   key={`${t.id}-${idx}`} 
                   className={`flex flex-col bg-slate-50 p-6 md:p-12 rounded-2xl md:rounded-[2.5rem] border border-slate-100 hover:bg-white transition-all group cursor-default w-[80vw] sm:w-[400px] md:w-auto shrink-0 ${idx >= testimonials.length ? 'md:hidden' : 'flex'}`}
                 >
-                  <div className="flex text-amber-500 mb-6 md:mb-8 space-x-1">
+                  <div className="flex text-skyblue mb-6 md:mb-8 space-x-1">
                     {[...Array(t.rating || 5)].map((_, i) => (
                       <svg key={i} className="w-3 h-3 md:w-4 md:h-4 fill-current" viewBox="0 0 20 20">
                         <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
@@ -524,12 +504,12 @@ const App: React.FC = () => {
                     <p className="text-slate-700 leading-relaxed italic text-sm md:text-lg">"{t.feedback}"</p>
                   </div>
                   <div className="flex items-center pt-6 md:pt-10 border-t border-slate-200/50">
-                    <div className="w-10 h-10 md:w-14 md:h-14 rounded-full overflow-hidden mr-4 md:mr-5 border-2 border-white shadow-lg">
+                    <div className="w-10 h-10 md:w-14 md:h-14 rounded-full overflow-hidden mr-4 md:mr-5 border-2 border-white shadow-lg grayscale group-hover:grayscale-0 transition-all">
                       <img src={t.avatarUrl || `https://i.pravatar.cc/150?u=${t.id}`} alt={t.name} className="w-full h-full object-cover" />
                     </div>
                     <div>
                       <h5 className="text-slate-900 font-bold text-xs md:text-base leading-tight">{t.name}</h5>
-                      <p className="text-slate-500 text-[8px] md:text-[10px] uppercase tracking-widest font-bold mt-1">{t.projectType}</p>
+                      <p className="text-sagegreen text-[8px] md:text-[10px] uppercase tracking-widest font-bold mt-1">{t.projectType}</p>
                     </div>
                   </div>
                 </div>
@@ -543,7 +523,7 @@ const App: React.FC = () => {
       <section id="calculator" className="py-16 md:py-32 bg-slate-50">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12 md:mb-20">
-            <h2 className="text-[10px] md:text-sm font-bold text-amber-600 uppercase tracking-[0.4em] mb-3 md:mb-4">Planning</h2>
+            <h2 className="text-[10px] md:text-sm font-bold text-terracotta uppercase tracking-[0.4em] mb-3 md:mb-4">Planning</h2>
             <h3 className="text-2xl md:text-5xl font-serif font-bold text-slate-900">Capital Projection</h3>
           </div>
           <div className="reveal-item">
@@ -557,14 +537,14 @@ const App: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-32">
             <div className="reveal-item">
-              <h2 className="text-3xl md:text-6xl font-serif font-bold mb-6 md:mb-10 leading-tight">Let's craft your <span className="italic text-amber-500">masterpiece</span>.</h2>
+              <h2 className="text-3xl md:text-6xl font-serif font-bold mb-6 md:mb-10 leading-tight">Let's craft your <span className="italic text-terracotta">masterpiece</span>.</h2>
               <p className="text-slate-400 mb-8 md:mb-16 text-sm md:text-xl leading-relaxed font-light">
                 Our synthesis of architectural vision and engineering rigor starts with a conversation. Contact our executive team for an initial feasibility review.
               </p>
               <div className="space-y-6 md:space-y-10">
                 <div className="flex items-center group">
-                  <div className="w-10 h-10 md:w-14 md:h-14 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center mr-4 md:mr-6">
-                    <span className="text-lg md:text-2xl">📍</span>
+                  <div className="w-10 h-10 md:w-14 md:h-14 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center mr-4 md:mr-6 hover:bg-terracotta/20 transition-all">
+                    <span className="text-lg md:text-2xl text-terracotta">📍</span>
                   </div>
                   <div>
                     <h5 className="text-[8px] md:text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Global HQ</h5>
@@ -572,8 +552,8 @@ const App: React.FC = () => {
                   </div>
                 </div>
                 <div className="flex items-center group">
-                  <div className="w-10 h-10 md:w-14 md:h-14 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center mr-4 md:mr-6">
-                    <span className="text-lg md:text-2xl">📞</span>
+                  <div className="w-10 h-10 md:w-14 md:h-14 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center mr-4 md:mr-6 hover:bg-terracotta/20 transition-all">
+                    <span className="text-lg md:text-2xl text-terracotta">📞</span>
                   </div>
                   <div>
                     <h5 className="text-[8px] md:text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Inquiry Line</h5>
@@ -589,18 +569,18 @@ const App: React.FC = () => {
                   <div className="grid sm:grid-cols-2 gap-4 md:gap-6">
                     <div>
                       <label className="block text-[8px] md:text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">First Name</label>
-                      <input type="text" className="w-full bg-slate-950/50 border border-slate-700/50 rounded-xl px-4 py-3 text-sm text-white placeholder:text-slate-700 outline-none" placeholder="John" />
+                      <input type="text" className="w-full bg-slate-950/50 border border-slate-700/50 rounded-xl px-4 py-3 text-sm text-white placeholder:text-slate-700 outline-none focus:border-terracotta" placeholder="John" />
                     </div>
                     <div>
                       <label className="block text-[8px] md:text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Last Name</label>
-                      <input type="text" className="w-full bg-slate-950/50 border border-slate-700/50 rounded-xl px-4 py-3 text-sm text-white placeholder:text-slate-700 outline-none" placeholder="Doe" />
+                      <input type="text" className="w-full bg-slate-950/50 border border-slate-700/50 rounded-xl px-4 py-3 text-sm text-white placeholder:text-slate-700 outline-none focus:border-terracotta" placeholder="Doe" />
                     </div>
                   </div>
                   <div>
                     <label className="block text-[8px] md:text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Business Email</label>
-                    <input type="email" className="w-full bg-slate-950/50 border border-slate-700/50 rounded-xl px-4 py-3 text-sm text-white placeholder:text-slate-700 outline-none" placeholder="j.doe@company.com" />
+                    <input type="email" className="w-full bg-slate-950/50 border border-slate-700/50 rounded-xl px-4 py-3 text-sm text-white placeholder:text-slate-700 outline-none focus:border-terracotta" placeholder="j.doe@company.com" />
                   </div>
-                  <button type="button" className="w-full bg-amber-600 text-white font-bold py-4 rounded-xl hover:bg-amber-500 transition-all text-xs md:text-base uppercase tracking-widest active:scale-95">
+                  <button type="button" className="w-full bg-terracotta text-white font-bold py-4 rounded-xl hover:bg-terracotta-hover transition-all text-xs md:text-base uppercase tracking-widest active:scale-95 shadow-xl shadow-terracotta/20">
                     Submit Inquiry
                   </button>
                 </form>
@@ -628,7 +608,7 @@ const App: React.FC = () => {
           </div>
           <button 
             onClick={() => setIsAdminOpen(true)}
-            className="text-[8px] md:text-[10px] font-bold text-slate-800 uppercase tracking-widest hover:text-amber-600 transition-colors"
+            className="text-[8px] md:text-[10px] font-bold text-slate-800 uppercase tracking-widest hover:text-terracotta transition-colors"
           >
             • Admin Portal •
           </button>
