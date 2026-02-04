@@ -8,7 +8,7 @@ import { storageService } from './services/storage';
 import { Project, Service, Testimonial } from './types';
 
 const App: React.FC = () => {
-  const portfolioRef = useRef<HTMLDivElement>(null);
+  const portfolioRef = useRef<HTMLDivElement | null>(null);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [itemsPerView, setItemsPerView] = useState(2);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
@@ -22,6 +22,15 @@ const App: React.FC = () => {
   const [services, setServices] = useState<Service[]>([]);
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
 
+  // Contact form state
+  const [contactForm, setContactForm] = useState({
+    firstName: '',
+    lastName: '',
+    email: ''
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitMessage, setSubmitMessage] = useState<string | null>(null);
+
   const loadData = () => {
     setIsLoading(true);
     try {
@@ -31,6 +40,26 @@ const App: React.FC = () => {
     } finally {
       setTimeout(() => setIsLoading(false), 500);
     }
+  };
+
+  const handleContactSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    
+    // Simulate form submission
+    setTimeout(() => {
+      console.log('Contact form submitted:', contactForm);
+      setSubmitMessage('Thank you! We\'ll be in touch within 24 hours.');
+      setContactForm({ firstName: '', lastName: '', email: '' });
+      setIsSubmitting(false);
+      
+      // Clear success message after 5 seconds
+      setTimeout(() => setSubmitMessage(null), 5000);
+    }, 1000);
+  };
+
+  const handleContactChange = (field: string, value: string) => {
+    setContactForm(prev => ({ ...prev, [field]: value }));
   };
 
   useEffect(() => {
@@ -291,7 +320,7 @@ const App: React.FC = () => {
             <div className="flex items-center justify-center space-x-2 mb-4">
               <span className="text-2xl font-serif font-bold text-white tracking-tighter">MILEDESIGNS</span>
             </div>
-            <p className="text-[10px] md:text-xs uppercase tracking-[0.3em] font-bold">© 2024 Design & Build Collective</p>
+            <p className="text-[10px] md:text-xs uppercase tracking-[0.3em] font-bold">© 2026 Miledesigns</p>
           </div>
         </footer>
       </div>
@@ -314,38 +343,36 @@ const App: React.FC = () => {
           />
         </div>
 
-        <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-10 pb-32">
-          <div className="max-w-4xl">
-            <div className="inline-flex items-center space-x-3 mb-6 md:mb-8 reveal-item">
-              <span className="h-px w-6 md:w-8 bg-terracotta"></span>
-              <span className="text-terracotta text-[9px] md:text-xs font-bold uppercase tracking-[0.4em]">Multi-Disciplinary Design</span>
+        <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-20 pb-20">
+          <div className="max-w-3xl">
+            <div className="inline-flex items-center space-x-3 mb-6 reveal-item">
+              <span className="h-px w-12 bg-terracotta"></span>
+              <span className="text-terracotta text-xs font-bold uppercase tracking-[0.25em]">Architecture & Construction </span>
             </div>
             
-            <h1 className="text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-serif font-bold text-white mb-6 md:mb-8 leading-[1.1] reveal-item">
-              Architecture that <br className="hidden sm:block" />
-              <span className="text-terracotta italic">Transcends</span> Function.
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-serif font-bold text-white mb-6 leading-tight reveal-item">
+              Where Vision <span className="text-terracotta">Meets</span> Reality
             </h1>
             
-            <p className="text-base md:text-xl lg:text-2xl text-slate-300 mb-8 md:mb-12 max-w-2xl leading-relaxed font-light reveal-item">
-              We create structures that are emotionally resonant and technically flawless. Modern design, engineered for a legacy.
+            <p className="text-base text-slate-300 mb-8 max-w-lg leading-relaxed reveal-item">
+              Award-winning architectural studio specializing in sustainable, innovative designs that transform spaces and inspire communities.
             </p>
             
-            <div className="flex flex-col sm:flex-row gap-4 md:gap-6 reveal-item">
+            <div className="flex flex-col sm:flex-row gap-4 reveal-item">
               <button 
                 onClick={() => scrollTo('portfolio')}
-                className="group relative bg-terracotta text-white px-8 py-4 md:px-10 md:py-5 rounded-full font-bold text-sm md:text-lg overflow-hidden transition-all shadow-2xl active:scale-95 text-center"
+                className="bg-terracotta text-white px-8 py-3.5 rounded-lg font-semibold text-sm hover:bg-terracotta-hover transition-all shadow-lg text-center"
               >
-                <span className="relative z-10">Our Portfolio</span>
-                <div className="absolute inset-0 bg-terracotta-hover translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+                View Projects
               </button>
               
               <button 
                 onClick={() => scrollTo('contact')}
-                className="flex items-center justify-center space-x-3 bg-white/5 backdrop-blur-xl border border-white/10 text-white px-8 py-4 md:px-10 md:py-5 rounded-full font-bold text-sm md:text-lg hover:bg-white/10 transition-all group active:scale-95 text-center"
+                className="flex items-center justify-center space-x-2 bg-white/10 border border-white/20 text-white px-8 py-3.5 rounded-lg font-semibold text-sm hover:bg-white/20 transition-all text-center"
               >
-                <span>Consultation</span>
-                <svg className="w-4 h-4 md:w-5 md:h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                <span>Get in Touch</span>
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
                 </svg>
               </button>
             </div>
@@ -357,24 +384,22 @@ const App: React.FC = () => {
       <AboutSection />
 
       {/* Services Section */}
-      <section id="services" className="py-16 md:py-32 bg-white">
+      <section id="services" className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12 md:mb-20">
-            <h2 className="text-[10px] md:text-sm font-bold text-sagegreen uppercase tracking-[0.3em] mb-3 md:mb-4">Core Disciplines</h2>
-            <h3 className="text-2xl md:text-5xl font-serif font-bold text-slate-900 leading-tight">Mastering Form & Function</h3>
+          <div className="text-center mb-10">
+            <h2 className="text-xs font-bold text-sagegreen uppercase tracking-[0.25em] mb-2">What We Do</h2>
+            <h3 className="text-2xl md:text-3xl font-bold text-slate-900">Our Services</h3>
           </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {services.map((service) => (
-              <div key={service.id} className="group relative bg-slate-50 rounded-2xl md:rounded-[2rem] p-6 md:p-10 hover:bg-terracotta transition-all duration-700 cursor-default flex flex-col border border-slate-100 hover:border-terracotta reveal-item">
-                <div className="text-4xl md:text-5xl mb-6 md:mb-8 group-hover:scale-110 transition-transform duration-500">{service.icon}</div>
-                <h4 className="text-lg md:text-2xl font-serif font-bold mb-3 md:mb-4 text-slate-900 group-hover:text-white">{service.title}</h4>
-                <p className="text-slate-600 text-sm md:text-base group-hover:text-terracotta-light transition-colors leading-relaxed mb-6 md:mb-8 flex-1">
+              <div key={service.id} className="group bg-slate-50 rounded-xl p-6 border border-slate-200 hover:border-terracotta/50 hover:shadow-lg transition-all duration-300 cursor-pointer">
+                <div className="w-12 h-12 rounded-lg bg-slate-100 flex items-center justify-center mb-4 group-hover:bg-terracotta transition-colors">
+                  <span className="text-xl">{service.icon}</span>
+                </div>
+                <h4 className="text-base font-semibold mb-2 text-slate-900 group-hover:text-terracotta transition-colors">{service.title}</h4>
+                <p className="text-slate-600 text-xs leading-relaxed line-clamp-3">
                   {service.description}
                 </p>
-                <div className="flex items-center text-terracotta font-bold text-[10px] md:text-xs uppercase tracking-widest group-hover:text-white group-hover:translate-x-2 transition-all">
-                  Learn Process
-                  <svg className="w-3 h-3 md:w-4 md:h-4 ml-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                </div>
               </div>
             ))}
           </div>
@@ -382,47 +407,28 @@ const App: React.FC = () => {
       </section>
 
       {/* Portfolio Section */}
-      <section id="portfolio" className="py-16 md:py-32 bg-slate-50 overflow-hidden">
+      <section id="portfolio" className="py-16 bg-slate-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col xl:flex-row xl:items-end justify-between mb-10 md:mb-16 gap-6 md:gap-10">
-            <div className="max-w-2xl">
-              <h2 className="text-[10px] md:text-sm font-bold text-terracotta uppercase tracking-[0.4em] mb-3 md:mb-4">Showcase</h2>
-              <h3 className="text-2xl md:text-5xl font-serif font-bold text-slate-900 leading-tight">Legacy Builds</h3>
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+            <div>
+              <h2 className="text-xs font-bold text-terracotta uppercase tracking-[0.25em] mb-2">Our Work</h2>
+              <h3 className="text-2xl md:text-3xl font-bold text-slate-900">Featured Projects</h3>
             </div>
             
-            <div className="flex flex-col md:flex-row md:items-center gap-6">
-              <div className="flex flex-wrap gap-1.5 md:gap-2">
-                {allTags.map(tag => (
-                  <button
-                    key={tag}
-                    onClick={() => setActiveFilter(tag)}
-                    className={`px-3 py-2 md:px-5 md:py-2.5 rounded-full text-[9px] md:text-xs font-bold uppercase tracking-widest transition-all ${
-                      activeFilter === tag 
-                      ? 'bg-terracotta text-white shadow-xl' 
-                      : 'bg-white text-slate-600 border border-slate-200 hover:border-terracotta'
-                    }`}
-                  >
-                    {tag}
-                  </button>
-                ))}
-              </div>
-
-              {totalSlides > 1 && (
-                <div className="flex space-x-2 shrink-0">
-                  <button 
-                    onClick={prevSlide}
-                    className="w-10 h-10 md:w-14 md:h-14 rounded-full bg-white border border-slate-200 flex items-center justify-center hover:bg-skyblue hover:border-skyblue hover:text-white transition-all text-slate-600 shadow-sm"
-                  >
-                    <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" /></svg>
-                  </button>
-                  <button 
-                    onClick={nextSlide}
-                    className="w-10 h-10 md:w-14 md:h-14 rounded-full bg-white border border-slate-200 flex items-center justify-center hover:bg-skyblue hover:border-skyblue hover:text-white transition-all text-slate-600 shadow-sm"
-                  >
-                    <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" /></svg>
-                  </button>
-                </div>
-              )}
+            <div className="flex flex-wrap gap-2">
+              {allTags.map(tag => (
+                <button
+                  key={tag}
+                  onClick={() => setActiveFilter(tag)}
+                  className={`px-4 py-2 rounded-lg text-xs font-medium transition-all ${
+                    activeFilter === tag 
+                    ? 'bg-terracotta text-white' 
+                    : 'bg-white text-slate-600 border border-slate-200 hover:border-terracotta hover:text-terracotta'
+                  }`}
+                >
+                  {tag}
+                </button>
+              ))}
             </div>
           </div>
           
@@ -438,20 +444,17 @@ const App: React.FC = () => {
                       <div 
                         key={project.id} 
                         onClick={() => handleProjectClick(project)}
-                        className="reveal-item flex-1 group relative bg-white rounded-2xl md:rounded-[2.5rem] overflow-hidden shadow-md hover:shadow-2xl transition-all duration-700 cursor-pointer h-[350px] md:h-[500px]"
+                        className="reveal-item flex-1 group relative bg-white rounded-xl md:rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-500 cursor-pointer h-[280px] md:h-[380px]"
                       >
                         <img 
                           src={project.imageUrl} 
                           alt={project.title} 
-                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 ease-out"
+                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent opacity-90 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-6 md:p-10">
-                          <span className="text-skyblue text-[9px] md:text-[10px] font-bold uppercase tracking-[0.3em] mb-1 md:mb-2">{project.category} • {project.year}</span>
-                          <h4 className="text-xl md:text-3xl font-serif font-bold text-white mb-2 md:mb-3">{project.title}</h4>
-                          <div className="flex items-center text-slate-300 text-[10px] md:text-sm">
-                            <span className="mr-4 md:mr-6">{project.location}</span>
-                            <span className="hidden sm:inline-block px-4 py-1.5 bg-terracotta text-[8px] md:text-[9px] font-bold uppercase tracking-widest rounded-full border border-white/10">View Details</span>
-                          </div>
+                        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent flex flex-col justify-end p-5 md:p-6">
+                          <span className="text-skyblue text-[10px] font-bold uppercase tracking-[0.25em] mb-1.5">{project.category} • {project.year}</span>
+                          <h4 className="text-lg md:text-xl font-serif font-bold text-white mb-1.5">{project.title}</h4>
+                          <span className="text-slate-300 text-xs">{project.location}</span>
                         </div>
                       </div>
                     ))}
@@ -479,52 +482,48 @@ const App: React.FC = () => {
       </section>
 
       {/* Testimonials Section */}
-      <section id="testimonials" className="py-16 md:py-32 bg-white relative overflow-hidden">
+      <section id="testimonials" className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12 md:mb-24">
-            <h2 className="text-[10px] md:text-sm font-bold text-skyblue uppercase tracking-[0.4em] mb-3 md:mb-4">Voices</h2>
-            <h3 className="text-2xl md:text-5xl font-serif font-bold text-slate-900">Client Perspectives</h3>
+          <div className="text-center mb-10">
+            <h2 className="text-xs font-bold text-skyblue uppercase tracking-[0.25em] mb-2">Testimonials</h2>
+            <h3 className="text-2xl md:text-3xl font-bold text-slate-900">What Our Clients Say</h3>
           </div>
           
-          <div className="relative overflow-hidden -mx-4 px-4 sm:mx-0 sm:px-0">
-            <div className="flex md:grid md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8 w-max md:w-full animate-marquee-mobile md:animate-none">
-              {(testimonials.length > 0 ? [...testimonials, ...testimonials] : []).map((t, idx) => (
-                <div 
-                  key={`${t.id}-${idx}`} 
-                  className={`flex flex-col bg-slate-50 p-6 md:p-12 rounded-2xl md:rounded-[2.5rem] border border-slate-100 hover:bg-white transition-all group cursor-default w-[80vw] sm:w-[400px] md:w-auto shrink-0 ${idx >= testimonials.length ? 'md:hidden' : 'flex'}`}
-                >
-                  <div className="flex text-skyblue mb-6 md:mb-8 space-x-1">
-                    {[...Array(t.rating || 5)].map((_, i) => (
-                      <svg key={i} className="w-3 h-3 md:w-4 md:h-4 fill-current" viewBox="0 0 20 20">
-                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                      </svg>
-                    ))}
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {testimonials.map((t, idx) => (
+              <div 
+                key={`${t.id}-${idx}`} 
+                className="bg-slate-50 p-6 rounded-xl border border-slate-200 hover:shadow-md transition-shadow"
+              >
+                <div className="flex text-amber-400 mb-3">
+                  {[...Array(t.rating || 5)].map((_, i) => (
+                    <svg key={i} className="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>
+                  ))}
+                </div>
+                <p className="text-slate-600 text-sm leading-relaxed mb-4">"{t.feedback}"</p>
+                <div className="flex items-center">
+                  <div className="w-10 h-10 rounded-full overflow-hidden mr-3 bg-slate-200">
+                    <img src={t.avatarUrl || `https://i.pravatar.cc/150?u=${t.id}`} alt={t.name} className="w-full h-full object-cover" />
                   </div>
-                  <div className="mb-6 md:mb-10 flex-1">
-                    <p className="text-slate-700 leading-relaxed italic text-sm md:text-lg">"{t.feedback}"</p>
-                  </div>
-                  <div className="flex items-center pt-6 md:pt-10 border-t border-slate-200/50">
-                    <div className="w-10 h-10 md:w-14 md:h-14 rounded-full overflow-hidden mr-4 md:mr-5 border-2 border-white shadow-lg grayscale group-hover:grayscale-0 transition-all">
-                      <img src={t.avatarUrl || `https://i.pravatar.cc/150?u=${t.id}`} alt={t.name} className="w-full h-full object-cover" />
-                    </div>
-                    <div>
-                      <h5 className="text-slate-900 font-bold text-xs md:text-base leading-tight">{t.name}</h5>
-                      <p className="text-sagegreen text-[8px] md:text-[10px] uppercase tracking-widest font-bold mt-1">{t.projectType}</p>
-                    </div>
+                  <div>
+                    <h5 className="text-sm font-semibold text-slate-900">{t.name}</h5>
+                    <p className="text-xs text-slate-500">{t.projectType}</p>
                   </div>
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
       {/* Estimator Section */}
-      <section id="calculator" className="py-16 md:py-32 bg-slate-50">
+      <section id="calculator" className="py-16 md:py-24 bg-slate-50">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12 md:mb-20">
-            <h2 className="text-[10px] md:text-sm font-bold text-terracotta uppercase tracking-[0.4em] mb-3 md:mb-4">Planning</h2>
-            <h3 className="text-2xl md:text-5xl font-serif font-bold text-slate-900">Capital Projection</h3>
+          <div className="text-center mb-12">
+            <h2 className="text-xs font-bold text-terracotta uppercase tracking-[0.3em] mb-2">Planning</h2>
+            <h3 className="text-2xl md:text-4xl font-serif font-bold text-slate-900">Capital Projection</h3>
           </div>
           <div className="reveal-item">
             <CostCalculator />
@@ -533,57 +532,98 @@ const App: React.FC = () => {
       </section>
 
       {/* Contact Section */}
-      <section id="contact" className="py-16 md:py-32 bg-slate-900 text-white shrink-0">
+      <section id="contact" className="py-16 bg-slate-100 text-slate-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-32">
+          <div className="grid lg:grid-cols-2 gap-12">
             <div className="reveal-item">
-              <h2 className="text-3xl md:text-6xl font-serif font-bold mb-6 md:mb-10 leading-tight">Let's craft your <span className="italic text-terracotta">masterpiece</span>.</h2>
-              <p className="text-slate-400 mb-8 md:mb-16 text-sm md:text-xl leading-relaxed font-light">
-                Our synthesis of architectural vision and engineering rigor starts with a conversation. Contact our executive team for an initial feasibility review.
+              <h2 className="text-2xl md:text-4xl font-bold mb-5 leading-tight">Ready to start your <span className="text-terracotta">project</span>?</h2>
+              <p className="text-slate-600 mb-6 text-sm leading-relaxed">
+                Get in touch with our team to discuss your architectural vision. We'll help bring your ideas to life.
               </p>
-              <div className="space-y-6 md:space-y-10">
-                <div className="flex items-center group">
-                  <div className="w-10 h-10 md:w-14 md:h-14 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center mr-4 md:mr-6 hover:bg-terracotta/20 transition-all">
-                    <span className="text-lg md:text-2xl text-terracotta">📍</span>
+              <div className="space-y-4">
+                <div className="flex items-center">
+                  <div className="w-10 h-10 rounded-lg bg-terracotta/10 flex items-center justify-center mr-3">
+                    <svg className="w-5 h-5 text-terracotta" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
                   </div>
                   <div>
-                    <h5 className="text-[8px] md:text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Global HQ</h5>
-                    <span className="text-slate-300 text-sm md:text-lg">772 Industrial Way, NY</span>
+                    <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Location</p>
+                    <p className="text-slate-800">772 Industrial Way, NY</p>
                   </div>
                 </div>
-                <div className="flex items-center group">
-                  <div className="w-10 h-10 md:w-14 md:h-14 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center mr-4 md:mr-6 hover:bg-terracotta/20 transition-all">
-                    <span className="text-lg md:text-2xl text-terracotta">📞</span>
+                <div className="flex items-center">
+                  <div className="w-10 h-10 rounded-lg bg-terracotta/10 flex items-center justify-center mr-3">
+                    <svg className="w-5 h-5 text-terracotta" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                    </svg>
                   </div>
                   <div>
-                    <h5 className="text-[8px] md:text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Inquiry Line</h5>
-                    <span className="text-slate-300 text-sm md:text-lg">+1 (888) MILE-01</span>
+                    <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Phone</p>
+                    <p className="text-slate-800">+1 (888) MILE-01</p>
                   </div>
                 </div>
               </div>
             </div>
             
             <div className="reveal-item">
-              <div className="bg-slate-800/40 p-6 md:p-12 rounded-3xl border border-white/5 shadow-2xl">
-                <form className="space-y-6 md:space-y-8">
-                  <div className="grid sm:grid-cols-2 gap-4 md:gap-6">
-                    <div>
-                      <label className="block text-[8px] md:text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">First Name</label>
-                      <input type="text" className="w-full bg-slate-950/50 border border-slate-700/50 rounded-xl px-4 py-3 text-sm text-white placeholder:text-slate-700 outline-none focus:border-terracotta" placeholder="John" />
+              <div className="bg-white p-6 rounded-xl shadow-lg">
+                {submitMessage ? (
+                  <div className="text-center py-6">
+                    <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                      <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                    <p className="text-slate-900 text-sm font-medium">{submitMessage}</p>
+                  </div>
+                ) : (
+                  <form onSubmit={handleContactSubmit} className="space-4">
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-600 mb-1.5">First Name</label>
+                        <input 
+                          type="text" 
+                          required
+                          className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:border-terracotta focus:ring-1 focus:ring-terracotta" 
+                          placeholder="John"
+                          value={contactForm.firstName}
+                          onChange={(e) => handleContactChange('firstName', e.target.value)}
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-600 mb-1.5">Last Name</label>
+                        <input 
+                          type="text" 
+                          required
+                          className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:border-terracotta focus:ring-1 focus:ring-terracotta" 
+                          placeholder="Doe"
+                          value={contactForm.lastName}
+                          onChange={(e) => handleContactChange('lastName', e.target.value)}
+                        />
+                      </div>
                     </div>
                     <div>
-                      <label className="block text-[8px] md:text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Last Name</label>
-                      <input type="text" className="w-full bg-slate-950/50 border border-slate-700/50 rounded-xl px-4 py-3 text-sm text-white placeholder:text-slate-700 outline-none focus:border-terracotta" placeholder="Doe" />
+                      <label className="block text-xs font-semibold text-slate-600 mb-1.5">Email</label>
+                      <input 
+                        type="email" 
+                        required
+                        className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:border-terracotta focus:ring-1 focus:ring-terracotta" 
+                        placeholder="j.doe@company.com"
+                        value={contactForm.email}
+                        onChange={(e) => handleContactChange('email', e.target.value)}
+                      />
                     </div>
-                  </div>
-                  <div>
-                    <label className="block text-[8px] md:text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Business Email</label>
-                    <input type="email" className="w-full bg-slate-950/50 border border-slate-700/50 rounded-xl px-4 py-3 text-sm text-white placeholder:text-slate-700 outline-none focus:border-terracotta" placeholder="j.doe@company.com" />
-                  </div>
-                  <button type="button" className="w-full bg-terracotta text-white font-bold py-4 rounded-xl hover:bg-terracotta-hover transition-all text-xs md:text-base uppercase tracking-widest active:scale-95 shadow-xl shadow-terracotta/20">
-                    Submit Inquiry
-                  </button>
-                </form>
+                    <button 
+                      type="submit" 
+                      disabled={isSubmitting}
+                      className="w-full bg-terracotta text-white font-semibold py-2.5 rounded-lg hover:bg-terracotta-hover transition-colors text-sm disabled:opacity-50"
+                    >
+                      {isSubmitting ? 'Sending...' : 'Send Message'}
+                    </button>
+                  </form>
+                )}
               </div>
             </div>
           </div>
@@ -594,23 +634,23 @@ const App: React.FC = () => {
 
       {isAdminOpen && <Admin onClose={() => setIsAdminOpen(false)} onDataUpdate={loadData} />}
 
-      <footer className="bg-slate-950 text-slate-600 py-12 md:py-24 border-t border-slate-900 shrink-0">
+      <footer className="bg-slate-950 text-slate-500 py-10 border-t border-slate-900 shrink-0">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-8 mb-10 md:mb-12">
-            <span className="text-2xl md:text-3xl font-serif font-bold text-white tracking-tighter">MILEDESIGNS</span>
-            <div className="hidden md:block h-6 w-px bg-slate-800"></div>
-            <span className="text-[8px] md:text-[10px] uppercase tracking-[0.3em] font-bold text-slate-500">© 2024 Architectural Collective</span>
+          <div className="flex flex-col md:flex-row items-center justify-center space-y-3 md:space-y-0 md:space-x-6 mb-8">
+            <span className="text-xl md:text-2xl font-serif font-bold text-white tracking-tighter">MILEDESIGNS</span>
+            <div className="hidden md:block h-5 w-px bg-slate-800"></div>
+            <span className="text-xs uppercase tracking-[0.2em] font-bold text-slate-500">© 2024 Architectural Collective</span>
           </div>
-          <div className="flex justify-center flex-wrap gap-4 md:gap-12 mb-10">
+          <div className="flex justify-center flex-wrap gap-6 mb-6">
             {['LinkedIn', 'Instagram', 'ArchDaily'].map(social => (
-              <a key={social} href="#" className="text-[10px] md:text-sm font-bold hover:text-white transition-colors uppercase tracking-widest">{social}</a>
+              <a key={social} href="#" className="text-xs font-bold hover:text-white transition-colors uppercase tracking-wider">{social}</a>
             ))}
           </div>
           <button 
             onClick={() => setIsAdminOpen(true)}
-            className="text-[8px] md:text-[10px] font-bold text-slate-800 uppercase tracking-widest hover:text-terracotta transition-colors"
+            className="text-[10px] font-bold text-slate-700 uppercase tracking-widest hover:text-terracotta transition-colors"
           >
-            • Admin Portal •
+            Admin Portal
           </button>
         </div>
       </footer>

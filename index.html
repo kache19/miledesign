@@ -5,87 +5,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MILEDESIGNS Design & Build</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              terracotta: {
-                DEFAULT: '#E27254',
-                hover: '#D16346',
-                light: '#F5E6E1',
-              },
-              skyblue: {
-                DEFAULT: '#87CEBB',
-                hover: '#76BCAB',
-                light: '#E6F4F1',
-              },
-              sagegreen: {
-                DEFAULT: '#8FBC8F',
-                hover: '#7EAB7E',
-                light: '#EAF2EA',
-              }
-            },
-            fontFamily: {
-              sans: ['Inter', 'sans-serif'],
-              serif: ['Playfair Display', 'serif'],
-            }
-          }
-        }
-      }
-    </script>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            scroll-behavior: smooth;
-        }
-        .font-serif {
-            font-family: 'Playfair Display', serif;
-        }
-        section {
-            scroll-margin-top: 5rem;
-        }
-        @media (min-width: 768px) {
-            section {
-                scroll-margin-top: 6rem;
-            }
-        }
-        .reveal-item {
-            opacity: 0;
-            transform: translateY(30px) scale(0.95);
-            transition: opacity 1.2s cubic-bezier(0.21, 0.45, 0.32, 0.9), 
-                        transform 1.2s cubic-bezier(0.21, 0.45, 0.32, 0.9);
-            will-change: transform, opacity;
-        }
-        .reveal-item.is-visible {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-        }
-        @keyframes slow-zoom {
-            0% { transform: scale(1); }
-            100% { transform: scale(1.1); }
-        }
-        .animate-slow-zoom {
-            animation: slow-zoom 20s ease-out forwards;
-        }
-        @keyframes marquee {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-        }
-        .animate-marquee-mobile {
-            animation: marquee 35s linear infinite;
-        }
-        @media (min-width: 768px) {
-            .animate-marquee-mobile {
-                animation: none !important;
-                transform: none !important;
-            }
-        }
-    </style>
+    
 <script type="importmap">
 {
   "imports": {
@@ -100,5 +24,6 @@
 </head>
 <body class="bg-slate-50 text-slate-900">
     <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
 </body>
 </html>

@@ -1,0 +1,22 @@
+/* Base Styles - Project Foundation */
+
+/* Font Setup */
+body {
+  font-family: var(--font-family-sans);
+  scroll-behavior: smooth;
+}
+
+.font-serif {
+  font-family: var(--font-family-serif);
+}
+
+/* Section Scroll Offset */
+section {
+  scroll-margin-top: 5rem;
+}
+
+@media (min-width: 768px) {
+  section {
+    scroll-margin-top: 6rem;
+  }
+}

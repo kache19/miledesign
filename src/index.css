@@ -1,0 +1,24 @@
+/* Project Styles - Organized Structure */
+@import './styles/_variables.css';
+@import './styles/_base.css';
+@import './styles/_animations.css';
+
+/* Tailwind CSS v4 - Project Build System */
+@import "tailwindcss";
+
+@theme {
+  --color-terracotta: #E27254;
+  --color-terracotta-hover: #D16346;
+  --color-terracotta-light: #F5E6E1;
+  
+  --color-skyblue: #87CEEB;
+  --color-skyblue-hover: #76BCAB;
+  --color-skyblue-light: #E6F4F1;
+  
+  --color-sagegreen: #8FBC8F;
+  --color-sagegreen-hover: #7EAB7E;
+  --color-sagegreen-light: #EAF2EA;
+  
+  --font-sans: 'Inter', sans-serif;
+  --font-serif: 'Playfair Display', serif;
+}
