@@ -67,20 +67,20 @@ export default function AIConsultant({
         )}
       </div>
 
-      <div className="p-4 bg-slate-800/50 border-t border-slate-700">
-        <form onSubmit={handleSubmit} className="relative flex items-center">
+      <div className="p-3 sm:p-4 bg-slate-800/50 border-t border-slate-700">
+        <form onSubmit={handleSubmit} className="relative flex items-center gap-2">
           <input 
             type="text"
             value={input}
             onChange={handleInputChange}
             placeholder="Ask anything..."
-            className="w-full bg-slate-900 border border-slate-700 text-white rounded-full py-3.5 pl-5 pr-12 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/50 transition-all placeholder:text-slate-600"
+            className="w-full bg-slate-900 border border-slate-700 text-white rounded-2xl py-3 pl-4 sm:pl-5 pr-12 sm:pr-14 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/50 transition-all placeholder:text-slate-600"
             disabled={isLoading}
           />
           <button 
             type="submit"
             disabled={isLoading || !input.trim()}
-            className="absolute right-1.5 p-2 rounded-full bg-amber-500 text-white hover:bg-amber-600 transition-colors disabled:opacity-50 disabled:bg-slate-700 shadow-lg"
+            className="absolute right-1.5 p-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-white hover:from-amber-600 hover:to-orange-600 transition-all disabled:opacity-50 disabled:bg-slate-700 shadow-lg"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
               <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />

@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 interface NavigationProps {
   onNavClick: (section: string) => void;
@@ -7,10 +7,55 @@ interface NavigationProps {
 
 const Navigation: React.FC<NavigationProps> = ({ onNavClick }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const mobileMenuRef = useRef<HTMLDivElement | null>(null);
+  const menuToggleRef = useRef<HTMLButtonElement | null>(null);
 
   const handleNavClick = (section: string) => {
     onNavClick(section);
     setIsMenuOpen(false);
+  };
+
+  useEffect(() => {
+    document.body.style.overflow = isMenuOpen ? 'hidden' : '';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isMenuOpen]);
+
+  useEffect(() => {
+    if (!isMenuOpen) return;
+
+    const firstButton = mobileMenuRef.current?.querySelector<HTMLButtonElement>('button');
+    firstButton?.focus();
+
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return;
+      setIsMenuOpen(false);
+      menuToggleRef.current?.focus();
+    };
+
+    window.addEventListener('keydown', handleEscape);
+    return () => window.removeEventListener('keydown', handleEscape);
+  }, [isMenuOpen]);
+
+  const handleMenuKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key !== 'Tab') return;
+    const focusable = mobileMenuRef.current?.querySelectorAll<HTMLElement>('button, [href], [tabindex]:not([tabindex="-1"])');
+    if (!focusable || focusable.length === 0) return;
+
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+      return;
+    }
+
+    if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
   };
 
   const navLinks = [
@@ -18,6 +63,9 @@ const Navigation: React.FC<NavigationProps> = ({ onNavClick }) => {
     { name: 'About', id: 'about' },
     { name: 'Services', id: 'services' },
     { name: 'Portfolio', id: 'portfolio' },
+    { name: 'Team', id: 'team' },
+    { name: 'Vlog', id: 'vlog' },
+    { name: 'Location', id: 'location' },
     { name: 'Testimonials', id: 'testimonials' },
     { name: 'Estimator', id: 'calculator' },
   ];
@@ -80,6 +128,7 @@ const Navigation: React.FC<NavigationProps> = ({ onNavClick }) => {
               </button>
               
               <button 
+                ref={menuToggleRef}
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                 className={`lg:hidden p-2.5 rounded-xl transition-all duration-300 ${
                   isMenuOpen 
@@ -87,6 +136,8 @@ const Navigation: React.FC<NavigationProps> = ({ onNavClick }) => {
                     : 'bg-slate-100 text-slate-900 hover:bg-slate-200'
                 }`}
                 aria-label="Toggle Menu"
+                aria-expanded={isMenuOpen}
+                aria-controls="mobile-nav-menu"
               >
                 {isMenuOpen ? (
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -103,12 +154,17 @@ const Navigation: React.FC<NavigationProps> = ({ onNavClick }) => {
         </div>
 
         {/* Mobile Menu Overlay */}
-        <div 
+        <div
+          id="mobile-nav-menu"
+          ref={mobileMenuRef}
+          role="dialog"
+          aria-modal="true"
           className={`lg:hidden fixed inset-x-0 bottom-0 top-[64px] md:top-[80px] z-40 bg-slate-900 transition-all duration-500 ease-in-out ${
             isMenuOpen 
               ? 'opacity-100 translate-y-0 visible' 
               : 'opacity-0 -translate-y-4 invisible pointer-events-none'
           }`}
+          onKeyDown={handleMenuKeyDown}
         >
           <div className="flex flex-col items-center justify-center h-full space-y-6 px-6 pb-12">
             {navLinks.map((link) => (

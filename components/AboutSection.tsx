@@ -1,7 +1,12 @@
 
 import React, { useEffect, useRef, useState } from 'react';
+import { AboutContent } from '../types';
 
-const AboutSection: React.FC = () => {
+interface AboutSectionProps {
+  content: AboutContent;
+}
+
+const AboutSection: React.FC<AboutSectionProps> = ({ content }) => {
   const [isVisible, setIsVisible] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
 
@@ -79,18 +84,18 @@ const AboutSection: React.FC = () => {
         {/* Header Section */}
         <div className={`text-center max-w-4xl mx-auto mb-20 transition-all duration-1000 transform ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
           <span className="inline-block text-xs font-bold text-terracotta uppercase tracking-[0.3em] mb-4 px-4 py-2 bg-terracotta/10 rounded-full">
-            About Us
+            {content.badge}
           </span>
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-slate-900 mb-6 leading-tight">
-            Crafting environments that <span className="italic text-terracotta relative">
-              inspire
+            {content.headingPrefix} <span className="italic text-terracotta relative">
+              {content.headingHighlight}
               <svg className="absolute -bottom-2 left-0 w-full h-3 text-terracotta/20" viewBox="0 0 100 10" preserveAspectRatio="none">
                 <path d="M0,8 Q50,0 100,8" fill="none" stroke="currentColor" strokeWidth="2" />
               </svg>
-            </span> human connection
+            </span> {content.headingSuffix}
           </h2>
           <p className="text-lg md:text-xl text-slate-600 leading-relaxed max-w-3xl mx-auto">
-            Founded in 2025, MILEDESIGNS bridges the gap between visionary architecture and uncompromising engineering. We create spaces that shape who you are.
+            {content.introText}
           </p>
         </div>
 
@@ -100,7 +105,7 @@ const AboutSection: React.FC = () => {
           <div className={`transition-all duration-1000 delay-200 transform ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'}`}>
             <div className="space-y-8">
               <p className="text-slate-600 text-lg leading-relaxed">
-                Our team consists of <span className="font-semibold text-slate-900">award-winning architects</span>, master craftsmen, and sustainability experts who believe that every blueprint is a promise of quality. We don't just follow industry standards; we set them through rigorous material selection and innovative construction technology.
+                {content.bodyText}
               </p>
               
               <div className="flex flex-wrap gap-3">
@@ -144,7 +149,7 @@ const AboutSection: React.FC = () => {
               {/* Main Image */}
               <div className="aspect-[4/5] rounded-[2.5rem] overflow-hidden shadow-2xl relative z-10">
                 <img 
-                  src="https://images.unsplash.com/photo-1503387762-592dee58c460?auto=format&fit=crop&q=80&w=2000" 
+                  src={content.imageUrl} 
                   alt="Architectural design showcase" 
                   className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-700"
                 />
@@ -175,7 +180,7 @@ const AboutSection: React.FC = () => {
                   <span className="text-skyblue/80 text-xs uppercase tracking-widest font-bold">Core Values</span>
                 </div>
                 <p className="text-white/90 text-sm leading-relaxed">
-                  Sustainable. Functional. <span className="text-terracotta">Aesthetic.</span>
+                  {content.visionText}
                 </p>
               </div>
 
@@ -237,13 +242,13 @@ const AboutSection: React.FC = () => {
         <div className={`mt-20 text-center transition-all duration-1000 delay-800 transform ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
           <div className="inline-flex items-center gap-4 p-2 bg-white rounded-full shadow-lg hover:shadow-xl transition-shadow">
             <span className="px-6 py-3 text-slate-700 font-medium">
-              Ready to bring your vision to life?
+              {content.ctaText}
             </span>
             <a 
               href="#contact" 
               className="px-8 py-3 bg-terracotta text-white rounded-full font-semibold hover:bg-terracotta-hover transition-colors duration-300 flex items-center gap-2 group"
             >
-              Get in Touch
+              {content.ctaButtonText}
               <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
               </svg>

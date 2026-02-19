@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Service, Project, Testimonial } from './types';
+import { AboutContent, ContactDetails, Service, Project, SocialLink, TeamMember, Testimonial, VlogEntry } from './types';
 
 export const SERVICES: Service[] = [
   {
@@ -124,5 +124,118 @@ export const TESTIMONIALS: Testimonial[] = [
     feedback: "The sustainable materials they suggested not only look stunning but have significantly reduced our energy footprint. Truly forward-thinking builders in every sense.",
     rating: 5,
     avatarUrl: 'https://i.pravatar.cc/150?u=elena'
+  }
+];
+
+export const SOCIAL_LINKS: SocialLink[] = [
+  {
+    id: 'social-linkedin',
+    name: 'LinkedIn',
+    platform: 'LinkedIn',
+    url: 'https://www.linkedin.com/',
+    enabled: true
+  },
+  {
+    id: 'social-instagram',
+    name: 'Instagram',
+    platform: 'Instagram',
+    url: 'https://www.instagram.com/',
+    enabled: true
+  },
+  {
+    id: 'social-tiktok',
+    name: 'TikTok',
+    platform: 'TikTok',
+    url: 'https://www.tiktok.com/',
+    enabled: true
+  },
+  {
+    id: 'social-whatsapp',
+    name: 'WhatsApp',
+    platform: 'WhatsApp',
+    url: 'https://wa.me/18880000000',
+    enabled: true
+  },
+  {
+    id: 'social-archdaily',
+    name: 'ArchDaily',
+    platform: 'Website',
+    url: 'https://www.archdaily.com/',
+    enabled: true
+  }
+];
+
+export const CONTACT_DETAILS: ContactDetails = {
+  id: 'contact-details',
+  location: '772 Industrial Way, NY',
+  phoneNumbers: ['+1 (888) MILE-01'],
+  showFloatingWhatsApp: true,
+  floatingWhatsAppMessage: 'Hi, am here to serve you!'
+};
+
+export const ABOUT_CONTENT: AboutContent = {
+  id: 'about-content',
+  badge: 'About Us',
+  headingPrefix: 'Crafting environments that',
+  headingHighlight: 'inspire',
+  headingSuffix: 'human connection',
+  introText:
+    'Founded in 2025, MILEDESIGNS bridges the gap between visionary architecture and uncompromising engineering. We create spaces that shape who you are.',
+  bodyText:
+    "Our team consists of award-winning architects, master craftsmen, and sustainability experts who believe that every blueprint is a promise of quality. We don't just follow industry standards; we set them through rigorous material selection and innovative construction technology.",
+  imageUrl: 'https://images.unsplash.com/photo-1503387762-592dee58c460?auto=format&fit=crop&q=80&w=2000',
+  visionText: 'Sustainable. Functional. Aesthetic.',
+  ctaText: 'Ready to bring your vision to life?',
+  ctaButtonText: 'Get in Touch'
+};
+
+export const TEAM_MEMBERS: TeamMember[] = [
+  {
+    id: 'team-1',
+    name: 'Mile K. Ofori',
+    role: 'Principal Architect',
+    bio: 'Leads concept design and design governance across residential and commercial projects.',
+    imageUrl: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=800'
+  },
+  {
+    id: 'team-2',
+    name: 'Amara Ellis',
+    role: 'Interior Design Lead',
+    bio: 'Focuses on material curation, space planning, and high-impact interior detailing.',
+    imageUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=800'
+  },
+  {
+    id: 'team-3',
+    name: 'Daniel Price',
+    role: 'Construction Manager',
+    bio: 'Coordinates contractors, schedules, and on-site quality assurance from start to finish.',
+    imageUrl: 'https://images.unsplash.com/photo-1582750433449-648ed127bb54?auto=format&fit=crop&q=80&w=800'
+  }
+];
+
+export const VLOG_ENTRIES: VlogEntry[] = [
+  {
+    id: 'vlog-1',
+    title: 'Site Walkthrough: Modern Family Villa',
+    topic: 'Construction Diary',
+    duration: '12:45',
+    thumbnailUrl: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&q=80&w=1200',
+    url: 'https://www.youtube.com/results?search_query=modern+villa+construction+walkthrough'
+  },
+  {
+    id: 'vlog-2',
+    title: 'How We Plan Functional Interiors',
+    topic: 'Design Breakdown',
+    duration: '09:20',
+    thumbnailUrl: 'https://images.unsplash.com/photo-1617104551722-3b2d51366400?auto=format&fit=crop&q=80&w=1200',
+    url: 'https://www.youtube.com/results?search_query=interior+design+planning+process'
+  },
+  {
+    id: 'vlog-3',
+    title: 'Budgeting a New Build from Zero',
+    topic: 'Client Education',
+    duration: '11:07',
+    thumbnailUrl: 'https://images.unsplash.com/photo-1503387762-592dee58c460?auto=format&fit=crop&q=80&w=1200',
+    url: 'https://www.youtube.com/results?search_query=house+construction+budget+guide'
   }
 ];

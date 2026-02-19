@@ -15,18 +15,44 @@ A modern design and build consultation platform with AI-powered features.
    npm install
    ```
 
-2. Set the `GEMINI_API_KEY` in `.env.local` to your Gemini API key:
+2. Set environment variables in `.env.local`:
    ```bash
    cp .env.local.example .env.local
-   # Edit .env.local and add your API key
+   # Edit .env.local and add your keys
+   ```
+   - `GEMINI_API_KEY` for AI consultant features
+   - `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` for contact form database submissions
+
+3. Create the Supabase table used by the contact form:
+   ```sql
+   create table if not exists public.contact_inquiries (
+     id uuid primary key default gen_random_uuid(),
+     first_name text not null,
+     last_name text not null,
+     email text not null,
+     phone text not null,
+     service_type text not null,
+     budget_range text not null,
+     timeline text not null,
+     message text not null,
+     created_at timestamptz not null default now()
+   );
+
+   alter table public.contact_inquiries enable row level security;
+
+   create policy "Allow public inserts for contact inquiries"
+   on public.contact_inquiries
+   for insert
+   to anon
+   with check (true);
    ```
 
-3. Run the app:
+4. Run the app:
    ```bash
    npm run dev
    ```
 
-4. Open http://localhost:3000 in your browser
+5. Open http://localhost:3000 in your browser
 
 ## Build for Production
 
@@ -71,6 +97,8 @@ The built files will be in the `dist/` directory.
 | Variable | Description | Required |
 |----------|-------------|----------|
 | `GEMINI_API_KEY` | Google Gemini API key for AI features | Yes |
+| `VITE_SUPABASE_URL` | Supabase project URL | Yes (for DB submissions) |
+| `VITE_SUPABASE_ANON_KEY` | Supabase anon/public key | Yes (for DB submissions) |
 
 ## Tech Stack
 

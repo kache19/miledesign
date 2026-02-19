@@ -83,7 +83,7 @@ const CostCalculator: React.FC = () => {
                     onClick={() => setQuality(q as any)}
                     className={`flex-1 py-1.5 text-[10px] font-medium rounded-md transition-all ${quality === q ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500'}`}
                   >
-                    {q.charAt(0)}
+                    {q}
                   </button>
                 ))}
               </div>

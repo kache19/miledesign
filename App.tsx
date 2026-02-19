@@ -5,7 +5,8 @@ import CostCalculator from './components/CostCalculator';
 import AboutSection from './components/AboutSection';
 import Admin from './components/Admin';
 import { storageService } from './services/storage';
-import { Project, Service, Testimonial } from './types';
+import { getSupabaseClient, isSupabaseConfigured } from './services/supabase';
+import { AboutContent, ContactDetails, Project, Service, SocialLink, TeamMember, Testimonial, VlogEntry } from './types';
 
 const App: React.FC = () => {
   const portfolioRef = useRef<HTMLDivElement | null>(null);
@@ -21,41 +22,110 @@ const App: React.FC = () => {
   const [projects, setProjects] = useState<Project[]>([]);
   const [services, setServices] = useState<Service[]>([]);
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+  const [socialLinks, setSocialLinks] = useState<SocialLink[]>([]);
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
+  const [vlogEntries, setVlogEntries] = useState<VlogEntry[]>([]);
+  const [contactDetails, setContactDetails] = useState<ContactDetails>({
+    id: 'contact-details',
+    location: '',
+    phoneNumbers: [],
+    showFloatingWhatsApp: true,
+    floatingWhatsAppMessage: 'Hi, am here to serve you!'
+  });
+  const [aboutContent, setAboutContent] = useState<AboutContent>({
+    id: 'about-content',
+    badge: '',
+    headingPrefix: '',
+    headingHighlight: '',
+    headingSuffix: '',
+    introText: '',
+    bodyText: '',
+    imageUrl: '',
+    visionText: '',
+    ctaText: '',
+    ctaButtonText: ''
+  });
 
   // Contact form state
   const [contactForm, setContactForm] = useState({
     firstName: '',
     lastName: '',
-    email: ''
+    email: '',
+    phone: '',
+    serviceType: '',
+    budgetRange: '',
+    timeline: '',
+    message: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitMessage, setSubmitMessage] = useState<string | null>(null);
+  const resetContactForm = () => {
+    setContactForm({
+      firstName: '',
+      lastName: '',
+      email: '',
+      phone: '',
+      serviceType: '',
+      budgetRange: '',
+      timeline: '',
+      message: ''
+    });
+  };
 
-  const loadData = () => {
-    setIsLoading(true);
+  const loadData = (withLoader = true) => {
+    if (withLoader) setIsLoading(true);
     try {
       setProjects(storageService.getProjects());
       setServices(storageService.getServices());
       setTestimonials(storageService.getTestimonials());
+      setSocialLinks(storageService.getSocialLinks());
+      setTeamMembers(storageService.getTeamMembers());
+      setVlogEntries(storageService.getVlogEntries());
+      setContactDetails(storageService.getContactDetails());
+      setAboutContent(storageService.getAboutContent());
     } finally {
-      setTimeout(() => setIsLoading(false), 500);
+      if (withLoader) {
+        setTimeout(() => setIsLoading(false), 500);
+      }
     }
   };
 
-  const handleContactSubmit = (e: React.FormEvent) => {
+  const handleContactSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
-    // Simulate form submission
-    setTimeout(() => {
-      console.log('Contact form submitted:', contactForm);
+    setSubmitMessage(null);
+
+    try {
+      if (!isSupabaseConfigured) {
+        setSubmitMessage('Supabase is not configured. Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.');
+        return;
+      }
+
+      const supabase = getSupabaseClient();
+      const { error } = await supabase.from('contact_inquiries').insert({
+        first_name: contactForm.firstName,
+        last_name: contactForm.lastName,
+        email: contactForm.email,
+        phone: contactForm.phone,
+        service_type: contactForm.serviceType,
+        budget_range: contactForm.budgetRange,
+        timeline: contactForm.timeline,
+        message: contactForm.message
+      });
+
+      if (error) {
+        throw error;
+      }
+
       setSubmitMessage('Thank you! We\'ll be in touch within 24 hours.');
-      setContactForm({ firstName: '', lastName: '', email: '' });
-      setIsSubmitting(false);
-      
-      // Clear success message after 5 seconds
+      resetContactForm();
       setTimeout(() => setSubmitMessage(null), 5000);
-    }, 1000);
+    } catch (error) {
+      console.error('Failed to submit contact form:', error);
+      setSubmitMessage('Unable to submit right now. Please try again in a moment.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleContactChange = (field: string, value: string) => {
@@ -191,6 +261,148 @@ const App: React.FC = () => {
     );
   };
 
+  const renderSocialIcon = (platform: SocialLink['platform']) => {
+    const baseClass = 'w-4 h-4';
+    switch (platform) {
+      case 'LinkedIn':
+        return (
+          <svg className={baseClass} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M4.98 3.5A2.5 2.5 0 0 0 2.5 6a2.5 2.5 0 0 0 2.48 2.5A2.5 2.5 0 0 0 7.5 6 2.5 2.5 0 0 0 4.98 3.5zM3 9h4v12H3zM9 9h3.8v1.7h.1c.5-1 1.9-2 3.9-2 4.2 0 5 2.7 5 6.3V21h-4v-5.3c0-1.3 0-2.8-1.8-2.8s-2 1.4-2 2.7V21H9z" />
+          </svg>
+        );
+      case 'Instagram':
+        return (
+          <svg className={baseClass} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M7.8 2h8.4A5.8 5.8 0 0 1 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8A5.8 5.8 0 0 1 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2zm0 2A3.8 3.8 0 0 0 4 7.8v8.4A3.8 3.8 0 0 0 7.8 20h8.4a3.8 3.8 0 0 0 3.8-3.8V7.8A3.8 3.8 0 0 0 16.2 4H7.8zm9 1.5a1.2 1.2 0 1 1 0 2.4 1.2 1.2 0 0 1 0-2.4zM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6z" />
+          </svg>
+        );
+      case 'Facebook':
+        return (
+          <svg className={baseClass} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M13.5 21v-7h2.3l.4-3h-2.7V9.2c0-.9.2-1.5 1.5-1.5h1.4V5.1C16 5 15.1 5 14.1 5 11.8 5 10.2 6.4 10.2 9v2H8v3h2.2v7z" />
+          </svg>
+        );
+      case 'X':
+        return (
+          <svg className={baseClass} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M18.9 3h2.9l-6.3 7.2L23 21h-5.9l-4.6-6-5.2 6H4.4l6.8-7.7L1 3h6l4.2 5.6L18.9 3zM17.8 19h1.6L6.2 4.9H4.5z" />
+          </svg>
+        );
+      case 'YouTube':
+        return (
+          <svg className={baseClass} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M21.8 8s-.2-1.5-.8-2.1c-.8-.9-1.7-.9-2.1-1C16 4.6 12 4.6 12 4.6h0s-4 0-6.9.3c-.4.1-1.3.1-2.1 1C2.4 6.5 2.2 8 2.2 8S2 9.7 2 11.4v1.2C2 14.3 2.2 16 2.2 16s.2 1.5.8 2.1c.8.9 1.9.9 2.4 1 1.8.2 6.6.3 6.6.3s4 0 6.9-.3c.4-.1 1.3-.1 2.1-1 .6-.6.8-2.1.8-2.1s.2-1.7.2-3.4v-1.2C22 9.7 21.8 8 21.8 8zM10 14.5V9.5l5 2.5-5 2.5z" />
+          </svg>
+        );
+      case 'TikTok':
+        return (
+          <svg className={baseClass} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M13 3h3.2c.3 1.8 1.6 3.2 3.3 3.8V10c-1.6-.1-3.2-.6-4.5-1.5V15a5 5 0 1 1-5-5c.3 0 .7 0 1 .1v3.2a2 2 0 1 0 2 1.7V3z" />
+          </svg>
+        );
+      case 'WhatsApp':
+        return (
+          <svg className={baseClass} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M12 2a10 10 0 0 0-8.8 14.8L2 22l5.3-1.2A10 10 0 1 0 12 2zm5.9 14.1c-.2.6-1.1 1.1-1.6 1.1-.4 0-.8.2-2.8-.6-2.4-1-4-3.5-4.2-3.8-.2-.3-1-1.4-1-2.7s.7-1.9 1-2.2c.3-.3.6-.3.8-.3h.6c.2 0 .5 0 .7.5.2.6.8 1.9.9 2 .1.2.1.4 0 .6-.1.2-.2.4-.4.6l-.5.5c-.2.2-.3.4-.1.7.2.3.9 1.5 2 2.3 1.4 1.1 2.5 1.4 2.9 1.6.3.1.5.1.7-.1.2-.2.8-1 .9-1.3.2-.3.4-.2.7-.1.3.1 2 .9 2.3 1 .3.2.5.3.5.5 0 .3-.2 1-.4 1.6z" />
+          </svg>
+        );
+      default:
+        return (
+          <svg className={baseClass} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+            <path d="M3 12h18M12 3a15.3 15.3 0 0 1 4 9 15.3 15.3 0 0 1-4 9 15.3 15.3 0 0 1-4-9 15.3 15.3 0 0 1 4-9z" />
+          </svg>
+        );
+    }
+  };
+
+  const getSocialIconColorClass = (platform: SocialLink['platform']) => {
+    switch (platform) {
+      case 'LinkedIn':
+        return 'text-[#0A66C2]';
+      case 'Instagram':
+        return 'text-[#E4405F]';
+      case 'Facebook':
+        return 'text-[#1877F2]';
+      case 'X':
+        return 'text-[#111111]';
+      case 'YouTube':
+        return 'text-[#FF0000]';
+      case 'TikTok':
+        return 'text-[#111111]';
+      case 'Pinterest':
+        return 'text-[#BD081C]';
+      case 'Behance':
+        return 'text-[#1769FF]';
+      case 'Dribbble':
+        return 'text-[#EA4C89]';
+      case 'WhatsApp':
+        return 'text-[#25D366]';
+      default:
+        return 'text-slate-700';
+    }
+  };
+
+  const inquirySocialLinks = useMemo(() => {
+    const seenPlatforms = new Set<SocialLink['platform']>();
+    return socialLinks
+      .filter((item) => item.enabled && item.platform !== 'WhatsApp' && item.platform !== 'Website')
+      .filter((item) => {
+        if (seenPlatforms.has(item.platform)) return false;
+        seenPlatforms.add(item.platform);
+        return true;
+      });
+  }, [socialLinks]);
+
+  const whatsappUrl = socialLinks.find((item) => item.platform === 'WhatsApp' && item.enabled)?.url;
+  const gmailUrl = 'https://mail.google.com/mail/?view=cm&fs=1&to=info@miledesigns.com';
+  const mapSearchQuery = encodeURIComponent(contactDetails.location || 'New York, NY');
+  const mapEmbedUrl = `https://maps.google.com/maps?q=${mapSearchQuery}&t=&z=14&ie=UTF8&iwloc=&output=embed`;
+  const mapOpenUrl = `https://www.google.com/maps/search/?api=1&query=${mapSearchQuery}`;
+
+  const renderFloatingSupportActions = () => {
+    if (!contactDetails.showFloatingWhatsApp) return null;
+
+    return (
+      <div className="fixed bottom-5 right-5 z-[90] flex items-end gap-2">
+        <div className="hidden sm:block rounded-2xl bg-white border border-slate-200 shadow-lg px-3 py-2 text-xs font-semibold text-slate-700">
+          {contactDetails.floatingWhatsAppMessage}
+        </div>
+        <div className="flex items-center gap-2">
+          <a
+            href={gmailUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Send Email via Gmail"
+            title="Send Email via Gmail"
+            className="h-14 w-14 rounded-full bg-white border border-slate-200 shadow-xl shadow-slate-300/30 flex items-center justify-center hover:scale-105 transition-transform animate-bounce-slow"
+            style={{ animationDelay: '0.15s' }}
+          >
+            <svg className="w-7 h-7" viewBox="0 0 24 24" aria-hidden="true">
+              <path fill="#EA4335" d="M3 6.75v10.5h3V9.6L12 14l6-4.4v7.65h3V6.75L12 13 3 6.75z" />
+              <path fill="#4285F4" d="M21 6.75v10.5h-3V9.6z" />
+              <path fill="#34A853" d="M3 17.25h18V20H3z" />
+              <path fill="#FBBC04" d="M3 6.75L12 13l9-6.25L18.9 5H5.1z" />
+            </svg>
+          </a>
+          {whatsappUrl && (
+            <a
+              href={whatsappUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Chat on WhatsApp"
+              title="Chat on WhatsApp"
+              className="h-14 w-14 rounded-full bg-[#25D366] text-white shadow-xl shadow-emerald-500/30 flex items-center justify-center hover:scale-105 transition-transform animate-bounce-slow"
+            >
+              <svg className="w-7 h-7" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M12 2a10 10 0 0 0-8.8 14.8L2 22l5.3-1.2A10 10 0 1 0 12 2zm5.9 14.1c-.2.6-1.1 1.1-1.6 1.1-.4 0-.8.2-2.8-.6-2.4-1-4-3.5-4.2-3.8-.2-.3-1-1.4-1-2.7s.7-1.9 1-2.2c.3-.3.6-.3.8-.3h.6c.2 0 .5 0 .7.5.2.6.8 1.9.9 2 .1.2.1.4 0 .6-.1.2-.2.4-.4.6l-.5.5c-.2.2-.3.4-.1.7.2.3.9 1.5 2 2.3 1.4 1.1 2.5 1.4 2.9 1.6.3.1.5.1.7-.1.2-.2.8-1 .9-1.3.2-.3.4-.2.7-.1.3.1 2 .9 2.3 1 .3.2.5.3.5.5 0 .3-.2 1-.4 1.6z" />
+              </svg>
+            </a>
+          )}
+        </div>
+      </div>
+    );
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center">
@@ -218,9 +430,11 @@ const App: React.FC = () => {
 
           <div className="grid lg:grid-cols-2 gap-8 md:gap-12 lg:gap-20 items-start">
             <div className="space-y-4 md:space-y-8">
-              <div 
-                className="rounded-2xl md:rounded-[2rem] overflow-hidden shadow-xl relative group cursor-zoom-in"
+              <button
+                type="button"
+                className="w-full rounded-2xl md:rounded-[2rem] overflow-hidden shadow-xl relative group cursor-zoom-in text-left"
                 onClick={() => setFullScreenImage(selectedProject.imageUrl)}
+                aria-label={`Enlarge image for ${selectedProject.title}`}
               >
                 <img 
                   src={selectedProject.imageUrl} 
@@ -234,15 +448,17 @@ const App: React.FC = () => {
                     </svg>
                   </div>
                 </div>
-              </div>
+              </button>
               
               {selectedProject.gallery && selectedProject.gallery.length > 0 && (
                 <div className="grid grid-cols-3 gap-2 md:gap-4">
                   {selectedProject.gallery.map((img, idx) => (
-                    <div 
-                      key={idx} 
-                      className="rounded-xl md:rounded-2xl overflow-hidden shadow-lg aspect-square relative group cursor-zoom-in"
+                    <button
+                      key={idx}
+                      type="button"
+                      className="w-full rounded-xl md:rounded-2xl overflow-hidden shadow-lg aspect-square relative group cursor-zoom-in text-left"
                       onClick={() => setFullScreenImage(img)}
+                      aria-label={`Enlarge gallery image ${idx + 1} for ${selectedProject.title}`}
                     >
                       <img 
                         src={img} 
@@ -254,7 +470,7 @@ const App: React.FC = () => {
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
                         </svg>
                       </div>
-                    </div>
+                    </button>
                   ))}
                 </div>
               )}
@@ -314,6 +530,7 @@ const App: React.FC = () => {
         </div>
 
         {renderLightBox()}
+        {renderFloatingSupportActions()}
 
         <footer className="bg-slate-950 text-slate-500 py-12 border-t border-slate-900 mt-auto">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -321,6 +538,17 @@ const App: React.FC = () => {
               <span className="text-2xl font-serif font-bold text-white tracking-tighter">MILEDESIGNS</span>
             </div>
             <p className="text-[10px] md:text-xs uppercase tracking-[0.3em] font-bold">© 2026 Miledesigns</p>
+            <p className="mt-3 text-[10px] md:text-xs uppercase tracking-[0.2em] font-semibold text-slate-400">
+              Developer:{' '}
+              <a
+                href="https://www.kachehub.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-slate-300 hover:text-terracotta transition-colors"
+              >
+                KACHEHUB
+              </a>
+            </p>
           </div>
         </footer>
       </div>
@@ -381,7 +609,7 @@ const App: React.FC = () => {
       </section>
 
       {/* About Section */}
-      <AboutSection />
+      <AboutSection content={aboutContent} />
 
       {/* Services Section */}
       <section id="services" className="py-16 bg-white">
@@ -392,11 +620,11 @@ const App: React.FC = () => {
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {services.map((service) => (
-              <div key={service.id} className="group bg-slate-50 rounded-xl p-6 border border-slate-200 hover:border-terracotta/50 hover:shadow-lg transition-all duration-300 cursor-pointer">
-                <div className="w-12 h-12 rounded-lg bg-slate-100 flex items-center justify-center mb-4 group-hover:bg-terracotta transition-colors">
+              <div key={service.id} className="bg-slate-50 rounded-xl p-6 border border-slate-200 hover:shadow-lg transition-all duration-300">
+                <div className="w-12 h-12 rounded-lg bg-slate-100 flex items-center justify-center mb-4">
                   <span className="text-xl">{service.icon}</span>
                 </div>
-                <h4 className="text-base font-semibold mb-2 text-slate-900 group-hover:text-terracotta transition-colors">{service.title}</h4>
+                <h4 className="text-base font-semibold mb-2 text-slate-900">{service.title}</h4>
                 <p className="text-slate-600 text-xs leading-relaxed line-clamp-3">
                   {service.description}
                 </p>
@@ -441,10 +669,12 @@ const App: React.FC = () => {
                 {Array.from({ length: Math.max(1, totalSlides) }).map((_, slideIdx) => (
                   <div key={slideIdx} className="flex min-w-full gap-4 md:gap-10">
                     {filteredProjects.slice(slideIdx * itemsPerView, (slideIdx + 1) * itemsPerView).map((project) => (
-                      <div 
-                        key={project.id} 
+                      <button
+                        key={project.id}
+                        type="button"
                         onClick={() => handleProjectClick(project)}
-                        className="reveal-item flex-1 group relative bg-white rounded-xl md:rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-500 cursor-pointer h-[280px] md:h-[380px]"
+                        className="reveal-item flex-1 group relative bg-white rounded-xl md:rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-500 h-[280px] md:h-[380px] text-left"
+                        aria-label={`Open project ${project.title}`}
                       >
                         <img 
                           src={project.imageUrl} 
@@ -456,7 +686,7 @@ const App: React.FC = () => {
                           <h4 className="text-lg md:text-xl font-serif font-bold text-white mb-1.5">{project.title}</h4>
                           <span className="text-slate-300 text-xs">{project.location}</span>
                         </div>
-                      </div>
+                      </button>
                     ))}
                     {Array.from({ length: Math.max(0, itemsPerView - filteredProjects.slice(slideIdx * itemsPerView, (slideIdx + 1) * itemsPerView).length) }).map((_, i) => (
                       <div key={`empty-${i}`} className="hidden md:block flex-1"></div>
@@ -489,11 +719,11 @@ const App: React.FC = () => {
             <h3 className="text-2xl md:text-3xl font-bold text-slate-900">What Our Clients Say</h3>
           </div>
           
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div className="flex md:grid md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5 overflow-x-auto md:overflow-visible snap-x snap-mandatory md:snap-none pb-2 md:pb-0 -mx-4 px-4 sm:mx-0 sm:px-0">
             {testimonials.map((t, idx) => (
               <div 
                 key={`${t.id}-${idx}`} 
-                className="bg-slate-50 p-6 rounded-xl border border-slate-200 hover:shadow-md transition-shadow"
+                className="min-w-[85%] sm:min-w-[70%] md:min-w-0 snap-start bg-slate-50 p-6 rounded-xl border border-slate-200 hover:shadow-md transition-shadow"
               >
                 <div className="flex text-amber-400 mb-3">
                   {[...Array(t.rating || 5)].map((_, i) => (
@@ -518,6 +748,96 @@ const App: React.FC = () => {
         </div>
       </section>
 
+      {/* Team Section */}
+      <section id="team" className="py-16 bg-slate-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-10">
+            <h2 className="text-xs font-bold text-skyblue uppercase tracking-[0.25em] mb-2">Our Team</h2>
+            <h3 className="text-2xl md:text-3xl font-bold text-slate-900">Experts Behind Every Build</h3>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
+            {teamMembers.map((member) => (
+              <article key={member.id} className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow">
+                <img src={member.imageUrl} alt={member.name} className="w-full h-60 object-cover" />
+                <div className="p-5">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-terracotta mb-1">{member.role}</p>
+                  <h4 className="text-lg font-semibold text-slate-900 mb-2">{member.name}</h4>
+                  <p className="text-sm text-slate-600 leading-relaxed">{member.bio}</p>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Vlog Section */}
+      <section id="vlog" className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-10">
+            <h2 className="text-xs font-bold text-terracotta uppercase tracking-[0.25em] mb-2">Vlog</h2>
+            <h3 className="text-2xl md:text-3xl font-bold text-slate-900">Watch How We Build</h3>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
+            {vlogEntries.map((entry) => (
+              <a
+                key={entry.id}
+                href={entry.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group bg-slate-50 border border-slate-200 rounded-2xl overflow-hidden hover:shadow-lg transition-shadow"
+              >
+                <div className="relative">
+                  <img src={entry.thumbnailUrl} alt={entry.title} className="w-full h-52 object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <div className="absolute inset-0 bg-slate-900/25 group-hover:bg-slate-900/40 transition-colors flex items-center justify-center">
+                    <span className="h-14 w-14 rounded-full bg-white/90 flex items-center justify-center shadow-xl">
+                      <svg className="w-6 h-6 text-slate-900 ml-1" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <path d="M8 5v14l11-7z" />
+                      </svg>
+                    </span>
+                  </div>
+                </div>
+                <div className="p-5">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-skyblue mb-1">{entry.topic} • {entry.duration}</p>
+                  <h4 className="text-base font-semibold text-slate-900">{entry.title}</h4>
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Map Section */}
+      <section id="location" className="py-16 bg-slate-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-10">
+            <h2 className="text-xs font-bold text-skyblue uppercase tracking-[0.25em] mb-2">Map Location</h2>
+            <h3 className="text-2xl md:text-3xl font-bold text-slate-900">Find Our Studio</h3>
+            <p className="text-sm text-slate-600 mt-3">{contactDetails.location || 'New York, NY'}</p>
+          </div>
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-lg overflow-hidden">
+            <iframe
+              title="Miledesigns office location"
+              src={mapEmbedUrl}
+              loading="lazy"
+              className="w-full h-[360px] md:h-[460px] border-0"
+              referrerPolicy="no-referrer-when-downgrade"
+            />
+          </div>
+          <div className="mt-5 text-center">
+            <a
+              href={mapOpenUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center rounded-full bg-slate-900 text-white px-6 py-2.5 text-sm font-semibold hover:bg-slate-800 transition-colors"
+            >
+              Open in Google Maps
+            </a>
+          </div>
+        </div>
+      </section>
+
       {/* Estimator Section */}
       <section id="calculator" className="py-16 md:py-24 bg-slate-50">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -536,9 +856,9 @@ const App: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-12">
             <div className="reveal-item">
-              <h2 className="text-2xl md:text-4xl font-bold mb-5 leading-tight">Ready to start your <span className="text-terracotta">project</span>?</h2>
+              <h2 className="text-2xl md:text-4xl font-bold mb-5 leading-tight">Start Your <span className="text-terracotta">Inquiry</span></h2>
               <p className="text-slate-600 mb-6 text-sm leading-relaxed">
-                Get in touch with our team to discuss your architectural vision. We'll help bring your ideas to life.
+                Share your project scope and priorities. Our team will review your inquiry and respond with a tailored next step.
               </p>
               <div className="space-y-4">
                 <div className="flex items-center">
@@ -550,7 +870,7 @@ const App: React.FC = () => {
                   </div>
                   <div>
                     <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Location</p>
-                    <p className="text-slate-800">772 Industrial Way, NY</p>
+                    <p className="text-slate-800">{contactDetails.location}</p>
                   </div>
                 </div>
                 <div className="flex items-center">
@@ -561,69 +881,168 @@ const App: React.FC = () => {
                   </div>
                   <div>
                     <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Phone</p>
-                    <p className="text-slate-800">+1 (888) MILE-01</p>
+                    <div className="text-slate-800 space-y-0.5">
+                      {contactDetails.phoneNumbers.map((phone, index) => (
+                        <p key={`${phone}-${index}`}>{phone}</p>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>
+              {inquirySocialLinks.length > 0 && (
+                <div className="mt-6">
+                  <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-3">Social</p>
+                  <div className="flex flex-wrap gap-3">
+                    {inquirySocialLinks.map((social) => (
+                      <a
+                        key={social.id}
+                        href={social.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        title={social.name}
+                        aria-label={social.name}
+                        className="inline-flex items-center gap-2 rounded-full border border-slate-300 bg-white px-3 py-2 text-[11px] font-bold text-slate-700 hover:text-terracotta hover:border-terracotta transition-colors"
+                      >
+                        <span className={getSocialIconColorClass(social.platform)}>
+                          {renderSocialIcon(social.platform)}
+                        </span>
+                        <span className="uppercase tracking-wider">{social.name}</span>
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
             
             <div className="reveal-item">
-              <div className="bg-white p-6 rounded-xl shadow-lg">
-                {submitMessage ? (
-                  <div className="text-center py-6">
-                    <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                      <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                      </svg>
-                    </div>
-                    <p className="text-slate-900 text-sm font-medium">{submitMessage}</p>
+              <div className="bg-white p-5 sm:p-6 md:p-7 rounded-2xl shadow-xl border border-slate-200/70">
+                {submitMessage && (
+                  <div className="mb-4 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700">
+                    {submitMessage}
                   </div>
-                ) : (
-                  <form onSubmit={handleContactSubmit} className="space-4">
-                    <div className="grid sm:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-xs font-semibold text-slate-600 mb-1.5">First Name</label>
-                        <input 
-                          type="text" 
-                          required
-                          className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:border-terracotta focus:ring-1 focus:ring-terracotta" 
-                          placeholder="John"
-                          value={contactForm.firstName}
-                          onChange={(e) => handleContactChange('firstName', e.target.value)}
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-semibold text-slate-600 mb-1.5">Last Name</label>
-                        <input 
-                          type="text" 
-                          required
-                          className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:border-terracotta focus:ring-1 focus:ring-terracotta" 
-                          placeholder="Doe"
-                          value={contactForm.lastName}
-                          onChange={(e) => handleContactChange('lastName', e.target.value)}
-                        />
-                      </div>
+                )}
+                <form onSubmit={handleContactSubmit} className="space-y-4">
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-600 mb-1.5">First Name</label>
+                      <input 
+                        type="text" 
+                        required
+                        className="w-full bg-white border border-slate-200 rounded-xl px-3.5 py-3 text-sm outline-none focus:border-terracotta focus:ring-2 focus:ring-terracotta/20 transition-all" 
+                        placeholder="John"
+                        value={contactForm.firstName}
+                        onChange={(e) => handleContactChange('firstName', e.target.value)}
+                      />
                     </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-600 mb-1.5">Last Name</label>
+                      <input 
+                        type="text" 
+                        required
+                        className="w-full bg-white border border-slate-200 rounded-xl px-3.5 py-3 text-sm outline-none focus:border-terracotta focus:ring-2 focus:ring-terracotta/20 transition-all" 
+                        placeholder="Doe"
+                        value={contactForm.lastName}
+                        onChange={(e) => handleContactChange('lastName', e.target.value)}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-xs font-semibold text-slate-600 mb-1.5">Email</label>
                       <input 
                         type="email" 
                         required
-                        className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:border-terracotta focus:ring-1 focus:ring-terracotta" 
+                        className="w-full bg-white border border-slate-200 rounded-xl px-3.5 py-3 text-sm outline-none focus:border-terracotta focus:ring-2 focus:ring-terracotta/20 transition-all" 
                         placeholder="j.doe@company.com"
                         value={contactForm.email}
                         onChange={(e) => handleContactChange('email', e.target.value)}
                       />
                     </div>
-                    <button 
-                      type="submit" 
-                      disabled={isSubmitting}
-                      className="w-full bg-terracotta text-white font-semibold py-2.5 rounded-lg hover:bg-terracotta-hover transition-colors text-sm disabled:opacity-50"
-                    >
-                      {isSubmitting ? 'Sending...' : 'Send Message'}
-                    </button>
-                  </form>
-                )}
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-600 mb-1.5">Phone</label>
+                      <input 
+                        type="tel" 
+                        required
+                        className="w-full bg-white border border-slate-200 rounded-xl px-3.5 py-3 text-sm outline-none focus:border-terracotta focus:ring-2 focus:ring-terracotta/20 transition-all" 
+                        placeholder="+1 (555) 000-0000"
+                        value={contactForm.phone}
+                        onChange={(e) => handleContactChange('phone', e.target.value)}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid sm:grid-cols-3 gap-4">
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-600 mb-1.5">Service Needed</label>
+                      <select
+                        required
+                        className="w-full bg-white border border-slate-200 rounded-xl px-3.5 py-3 text-sm outline-none focus:border-terracotta focus:ring-2 focus:ring-terracotta/20 transition-all"
+                        value={contactForm.serviceType}
+                        onChange={(e) => handleContactChange('serviceType', e.target.value)}
+                      >
+                        <option value="" disabled>Select service</option>
+                        <option value="Architecture Design">Architecture Design</option>
+                        <option value="Interior Design">Interior Design</option>
+                        <option value="Construction">Construction</option>
+                        <option value="Consultation">Consultation</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-600 mb-1.5">Budget Range</label>
+                      <select
+                        required
+                        className="w-full bg-white border border-slate-200 rounded-xl px-3.5 py-3 text-sm outline-none focus:border-terracotta focus:ring-2 focus:ring-terracotta/20 transition-all"
+                        value={contactForm.budgetRange}
+                        onChange={(e) => handleContactChange('budgetRange', e.target.value)}
+                      >
+                        <option value="" disabled>Select budget</option>
+                        <option value="Under $50k">Under $50k</option>
+                        <option value="$50k - $150k">$50k - $150k</option>
+                        <option value="$150k - $500k">$150k - $500k</option>
+                        <option value="$500k+">$500k+</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-600 mb-1.5">Timeline</label>
+                      <select
+                        required
+                        className="w-full bg-white border border-slate-200 rounded-xl px-3.5 py-3 text-sm outline-none focus:border-terracotta focus:ring-2 focus:ring-terracotta/20 transition-all"
+                        value={contactForm.timeline}
+                        onChange={(e) => handleContactChange('timeline', e.target.value)}
+                      >
+                        <option value="" disabled>Select timeline</option>
+                        <option value="ASAP">ASAP</option>
+                        <option value="1-3 months">1-3 months</option>
+                        <option value="3-6 months">3-6 months</option>
+                        <option value="6+ months">6+ months</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-600 mb-1.5">Project Details</label>
+                    <textarea
+                      required
+                      rows={4}
+                      className="w-full bg-white border border-slate-200 rounded-xl px-3.5 py-3 text-sm outline-none focus:border-terracotta focus:ring-2 focus:ring-terracotta/20 transition-all resize-none"
+                      placeholder="Tell us about your project, site, goals, and any special requirements."
+                      value={contactForm.message}
+                      onChange={(e) => handleContactChange('message', e.target.value)}
+                    ></textarea>
+                  </div>
+
+                  <button 
+                    type="submit" 
+                    disabled={isSubmitting}
+                    className="w-full bg-gradient-to-r from-terracotta to-orange-500 text-white font-semibold py-3 rounded-xl hover:from-terracotta-hover hover:to-orange-600 transition-all text-sm disabled:opacity-50 shadow-lg shadow-terracotta/20"
+                  >
+                    {isSubmitting ? 'Submitting Inquiry...' : 'Submit Inquiry'}
+                  </button>
+                  <p className="text-[11px] text-slate-500 text-center">
+                    Typical response time: within 24 hours.
+                  </p>
+                </form>
               </div>
             </div>
           </div>
@@ -631,21 +1050,28 @@ const App: React.FC = () => {
       </section>
 
       {renderLightBox()}
+      {renderFloatingSupportActions()}
 
-      {isAdminOpen && <Admin onClose={() => setIsAdminOpen(false)} onDataUpdate={loadData} />}
+      {isAdminOpen && <Admin onClose={() => setIsAdminOpen(false)} onDataUpdate={() => loadData(false)} />}
 
       <footer className="bg-slate-950 text-slate-500 py-10 border-t border-slate-900 shrink-0">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex flex-col md:flex-row items-center justify-center space-y-3 md:space-y-0 md:space-x-6 mb-8">
             <span className="text-xl md:text-2xl font-serif font-bold text-white tracking-tighter">MILEDESIGNS</span>
             <div className="hidden md:block h-5 w-px bg-slate-800"></div>
-            <span className="text-xs uppercase tracking-[0.2em] font-bold text-slate-500">© 2024 Architectural Collective</span>
+            <span className="text-xs uppercase tracking-[0.2em] font-bold text-slate-500">© 2026 Miledesigns</span>
           </div>
-          <div className="flex justify-center flex-wrap gap-6 mb-6">
-            {['LinkedIn', 'Instagram', 'ArchDaily'].map(social => (
-              <a key={social} href="#" className="text-xs font-bold hover:text-white transition-colors uppercase tracking-wider">{social}</a>
-            ))}
-          </div>
+          <p className="mb-6 text-[10px] md:text-xs uppercase tracking-[0.2em] font-semibold text-slate-400">
+            Developer:{' '}
+            <a
+              href="https://www.kachehub.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-slate-300 hover:text-terracotta transition-colors"
+            >
+              KACHEHUB
+            </a>
+          </p>
           <button 
             onClick={() => setIsAdminOpen(true)}
             className="text-[10px] font-bold text-slate-700 uppercase tracking-widest hover:text-terracotta transition-colors"
