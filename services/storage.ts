@@ -234,6 +234,13 @@ export const storageService = {
 };
 
 export const authService = {
+  async signUp(email: string, password: string): Promise<void> {
+    const { error } = await supabase.auth.signUp({ email, password });
+    if (error) {
+      throw new Error(error.message);
+    }
+  },
+
   async signIn(email: string, password: string): Promise<void> {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) {

@@ -340,6 +340,23 @@ const Admin: React.FC<AdminProps> = ({ onClose, onDataUpdate }) => {
     }
   };
 
+  const handleCreateAccount = async () => {
+    const email = loginEmail.trim().toLowerCase();
+    const loginPassword = password.trim();
+
+    if (!email || !loginPassword) {
+      notify('error', 'Enter email and password first, then create account.');
+      return;
+    }
+
+    try {
+      await authService.signUp(email, loginPassword);
+      notify('success', 'Account created. Verify email if required, then log in.');
+    } catch (error) {
+      notify('error', error instanceof Error ? error.message : 'Could not create account.');
+    }
+  };
+
   const addSubAdmin = async () => {
     const name = newSubAdmin.name.trim();
     const email = newSubAdmin.email.trim().toLowerCase();
@@ -735,6 +752,13 @@ const Admin: React.FC<AdminProps> = ({ onClose, onDataUpdate }) => {
             </div>
             <button type="submit" className="w-full bg-terracotta text-white font-bold py-3 rounded-xl hover:bg-terracotta-hover transition-colors active:scale-[0.98]">
               Unlock Dashboard
+            </button>
+            <button
+              type="button"
+              onClick={() => void handleCreateAccount()}
+              className="w-full border border-slate-700 text-slate-200 font-semibold py-3 rounded-xl hover:bg-slate-800 transition-colors"
+            >
+              Create Admin Account
             </button>
             <button type="button" onClick={handleExitAdmin} className="w-full text-slate-500 text-sm py-2 hover:text-white transition-colors">
               Cancel
