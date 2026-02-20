@@ -7,7 +7,7 @@ import { storageService } from './services/storage';
 import { AboutContent, ContactDetails, Project, Service, SocialLink, TeamMember, Testimonial, VlogEntry } from './types';
 
 const ADMIN_PORTAL_OPEN_KEY = 'miledesigns_admin_portal_open';
-const ADMIN_PORTAL_ENABLED = import.meta.env.VITE_ENABLE_ADMIN === 'true';
+const ADMIN_PORTAL_ENABLED = import.meta.env.VITE_ENABLE_ADMIN !== 'false';
 
 const App: React.FC = () => {
   const portfolioRef = useRef<HTMLDivElement | null>(null);
@@ -1156,7 +1156,7 @@ const App: React.FC = () => {
             {ADMIN_PORTAL_ENABLED && (
               <button
                 onClick={() => setIsAdminOpen(true)}
-                className="text-[10px] font-bold text-slate-700 uppercase tracking-widest hover:text-terracotta transition-colors"
+                className="text-[10px] font-bold text-slate-300 uppercase tracking-widest hover:text-terracotta transition-colors"
               >
                 Admin Portal
               </button>
