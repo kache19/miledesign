@@ -190,6 +190,34 @@ const AboutSection: React.FC<AboutSectionProps> = ({ content }) => {
               <div className="absolute -top-10 -right-10 w-40 h-40 bg-terracotta/20 rounded-full blur-3xl -z-10" />
               <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-skyblue/20 rounded-full blur-3xl -z-10" />
             </div>
+
+            {/* Mobile Cards */}
+            <div className="mt-5 space-y-3 md:hidden">
+              <div className="bg-white rounded-2xl p-4 shadow-lg border border-slate-100">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-terracotta rounded-full flex items-center justify-center">
+                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                  <div>
+                    <div className="text-sm font-bold text-slate-900">Award Winning</div>
+                    <div className="text-xs text-slate-500">Best Architecture 2023</div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-slate-900 rounded-2xl p-5 shadow-lg">
+                <div className="text-terracotta text-xl mb-2 italic font-serif">Our Vision</div>
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="w-2 h-2 bg-skyblue rounded-full animate-pulse" />
+                  <span className="text-skyblue/80 text-[11px] uppercase tracking-widest font-bold">Core Values</span>
+                </div>
+                <p className="text-white/90 text-sm leading-relaxed">
+                  {content.visionText}
+                </p>
+              </div>
+            </div>
           </div>
         </div>
         
