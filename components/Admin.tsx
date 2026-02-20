@@ -12,6 +12,15 @@ type AdminTab = 'projects' | 'services' | 'testimonials' | 'socials' | 'team' | 
 type EditableItem = Project | Service | Testimonial | SocialLink | TeamMember | VlogEntry | ContactDetails | AboutContent | AdminProfile;
 
 const Admin: React.FC<AdminProps> = ({ onClose, onDataUpdate }) => {
+  const supabaseProjectHost = useMemo(() => {
+    const rawUrl = import.meta.env.VITE_SUPABASE_URL as string | undefined;
+    if (!rawUrl) return 'Not configured';
+    try {
+      return new URL(rawUrl).host;
+    } catch {
+      return rawUrl;
+    }
+  }, []);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loginEmail, setLoginEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -792,6 +801,9 @@ const Admin: React.FC<AdminProps> = ({ onClose, onDataUpdate }) => {
             <button type="button" onClick={handleExitAdmin} className="w-full text-slate-500 text-sm py-2 hover:text-white transition-colors">
               Cancel
             </button>
+            <p className="text-[11px] text-slate-500 text-center">
+              Connected Supabase project: <span className="text-slate-300">{supabaseProjectHost}</span>
+            </p>
           </form>
         </div>
       </div>
