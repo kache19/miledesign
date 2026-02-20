@@ -7,7 +7,6 @@ import { storageService } from './services/storage';
 import { CONTACT_DETAILS } from './constants';
 import { AboutContent, ContactDetails, Project, Service, SocialLink, TeamMember, Testimonial, VlogEntry } from './types';
 
-const ADMIN_PORTAL_OPEN_KEY = 'miledesigns_admin_portal_open';
 const runtimeConfig = typeof window !== 'undefined' ? window.__RUNTIME_CONFIG__ : undefined;
 const adminFlag = import.meta.env.VITE_ENABLE_ADMIN ?? runtimeConfig?.ENABLE_ADMIN;
 const ADMIN_PORTAL_ENABLED = adminFlag !== 'false';
@@ -19,10 +18,7 @@ const App: React.FC = () => {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [activeFilter, setActiveFilter] = useState<string>('All');
   const [fullScreenImage, setFullScreenImage] = useState<string | null>(null);
-  const [isAdminOpen, setIsAdminOpen] = useState<boolean>(() => {
-    if (typeof window === 'undefined' || !ADMIN_PORTAL_ENABLED) return false;
-    return localStorage.getItem(ADMIN_PORTAL_OPEN_KEY) === 'true';
-  });
+  const [isAdminOpen, setIsAdminOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
 
@@ -188,11 +184,6 @@ const App: React.FC = () => {
   useEffect(() => {
     void loadData();
   }, []);
-
-  useEffect(() => {
-    if (!ADMIN_PORTAL_ENABLED) return;
-    localStorage.setItem(ADMIN_PORTAL_OPEN_KEY, isAdminOpen ? 'true' : 'false');
-  }, [isAdminOpen]);
 
   const heroImages = useMemo(() => {
     const images = aboutContent.homeBackgroundImages
