@@ -8,7 +8,9 @@ import { CONTACT_DETAILS } from './constants';
 import { AboutContent, ContactDetails, Project, Service, SocialLink, TeamMember, Testimonial, VlogEntry } from './types';
 
 const ADMIN_PORTAL_OPEN_KEY = 'miledesigns_admin_portal_open';
-const ADMIN_PORTAL_ENABLED = import.meta.env.VITE_ENABLE_ADMIN !== 'false';
+const runtimeConfig = typeof window !== 'undefined' ? window.__RUNTIME_CONFIG__ : undefined;
+const adminFlag = import.meta.env.VITE_ENABLE_ADMIN ?? runtimeConfig?.ENABLE_ADMIN;
+const ADMIN_PORTAL_ENABLED = adminFlag !== 'false';
 
 const App: React.FC = () => {
   const portfolioRef = useRef<HTMLDivElement | null>(null);
@@ -113,8 +115,16 @@ const App: React.FC = () => {
     setSubmitMessage(null);
 
     try {
-      const inquiryEmail = contactDetails.inquiryEmail || import.meta.env.VITE_INQUIRY_EMAIL || 'info@miledesigns.com';
-      const rawWhatsAppNumber = contactDetails.inquiryWhatsAppNumber || import.meta.env.VITE_INQUIRY_WHATSAPP_NUMBER || '';
+      const inquiryEmail =
+        contactDetails.inquiryEmail ||
+        import.meta.env.VITE_INQUIRY_EMAIL ||
+        runtimeConfig?.INQUIRY_EMAIL ||
+        'info@miledesigns.com';
+      const rawWhatsAppNumber =
+        contactDetails.inquiryWhatsAppNumber ||
+        import.meta.env.VITE_INQUIRY_WHATSAPP_NUMBER ||
+        runtimeConfig?.INQUIRY_WHATSAPP_NUMBER ||
+        '';
       const inquiryWhatsAppNumber = rawWhatsAppNumber.replace(/\D/g, '');
 
       const subject = `New Inquiry: ${contactForm.firstName} ${contactForm.lastName} (${contactForm.serviceType})`;
@@ -441,10 +451,12 @@ const App: React.FC = () => {
   const inquiryEmail =
     contactDetails.inquiryEmail?.trim() ||
     import.meta.env.VITE_INQUIRY_EMAIL ||
+    runtimeConfig?.INQUIRY_EMAIL ||
     CONTACT_DETAILS.inquiryEmail;
   const rawInquiryWhatsApp =
     contactDetails.inquiryWhatsAppNumber ||
     import.meta.env.VITE_INQUIRY_WHATSAPP_NUMBER ||
+    runtimeConfig?.INQUIRY_WHATSAPP_NUMBER ||
     CONTACT_DETAILS.inquiryWhatsAppNumber;
   const inquiryWhatsAppNumber = rawInquiryWhatsApp.replace(/\D/g, '');
   const whatsappUrl = inquiryWhatsAppNumber ? `https://wa.me/${inquiryWhatsAppNumber}` : '';

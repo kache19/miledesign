@@ -82,6 +82,16 @@ The built files will be in the `dist/` directory.
 | `VITE_INQUIRY_EMAIL` | Default email recipient for inquiry form submissions (can be updated in Admin Portal > Contact) | Yes |
 | `VITE_INQUIRY_WHATSAPP_NUMBER` | Default WhatsApp number for inquiry submissions and floating WhatsApp action (can be updated in Admin Portal > Contact) | Yes |
 
+## Runtime Config Fallback (Static Hosts)
+
+If your host blocks scoped environment variables, you can set runtime values in `public/runtime-config.js`:
+
+- `SUPABASE_URL`
+- `SUPABASE_ANON_KEY`
+- `ENABLE_ADMIN`
+- `INQUIRY_EMAIL`
+- `INQUIRY_WHATSAPP_NUMBER`
+
 ## Supabase Setup (Production Secure)
 
 1. In Supabase SQL Editor, run:
