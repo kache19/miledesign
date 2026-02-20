@@ -22,6 +22,7 @@ const App: React.FC = () => {
     return localStorage.getItem(ADMIN_PORTAL_OPEN_KEY) === 'true';
   });
   const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   // State for dynamic data
   const [projects, setProjects] = useState<Project[]>([]);
@@ -85,6 +86,7 @@ const App: React.FC = () => {
 
   const loadData = async (withLoader = true) => {
     if (withLoader) setIsLoading(true);
+    setLoadError(null);
     try {
       const data = await storageService.getAllContent();
       setProjects(data.projects);
@@ -97,6 +99,7 @@ const App: React.FC = () => {
       setAboutContent(data.aboutContent);
     } catch (error) {
       console.error('Failed to load site content:', error);
+      setLoadError(error instanceof Error ? error.message : 'Failed to load site content.');
     } finally {
       if (withLoader) {
         setTimeout(() => setIsLoading(false), 500);
@@ -503,6 +506,20 @@ const App: React.FC = () => {
       <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center">
         <div className="w-16 h-16 border-4 border-terracotta/20 border-t-terracotta rounded-full animate-spin mb-6"></div>
         <div className="text-white font-serif text-2xl animate-pulse tracking-tighter">MILEDESIGNS</div>
+      </div>
+    );
+  }
+
+  if (loadError) {
+    return (
+      <div className="min-h-screen bg-slate-950 flex items-center justify-center p-6">
+        <div className="w-full max-w-2xl rounded-2xl border border-red-900/40 bg-slate-900 p-6 text-center">
+          <h1 className="text-white text-xl font-bold mb-3">Configuration Error</h1>
+          <p className="text-red-300 text-sm">{loadError}</p>
+          <p className="text-slate-400 text-xs mt-3">
+            For Netlify, set `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` in Site settings, then redeploy.
+          </p>
+        </div>
       </div>
     );
   }

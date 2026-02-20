@@ -22,10 +22,17 @@ import {
   TESTIMONIALS,
   VLOG_ENTRIES
 } from '../constants';
-import { supabase } from './supabase';
+import { missingSupabaseConfigMessage, supabase } from './supabase';
 
 const TABLE = 'site_content';
 const SINGLETON_ID = 'main';
+
+const getSupabaseClient = () => {
+  if (!supabase) {
+    throw new Error(missingSupabaseConfigMessage);
+  }
+  return supabase;
+};
 
 const defaultData: SiteContentData = {
   projects: PROJECTS,
@@ -89,7 +96,8 @@ const normalizeSiteContent = (raw: Partial<SiteContentData> | null | undefined):
 });
 
 const ensureSingletonRow = async (): Promise<SiteContentData> => {
-  const { data, error } = await supabase
+  const client = getSupabaseClient();
+  const { data, error } = await client
     .from(TABLE)
     .select('content')
     .eq('id', SINGLETON_ID)
@@ -103,7 +111,7 @@ const ensureSingletonRow = async (): Promise<SiteContentData> => {
     return normalizeSiteContent(data.content as Partial<SiteContentData>);
   }
 
-  const { error: insertError } = await supabase.from(TABLE).upsert(
+  const { error: insertError } = await client.from(TABLE).upsert(
     {
       id: SINGLETON_ID,
       content: defaultData
@@ -124,8 +132,9 @@ export const storageService = {
   },
 
   async saveAllContent(data: SiteContentData): Promise<void> {
+    const client = getSupabaseClient();
     const normalized = normalizeSiteContent(data);
-    const { error } = await supabase.from(TABLE).upsert(
+    const { error } = await client.from(TABLE).upsert(
       {
         id: SINGLETON_ID,
         content: normalized
@@ -235,17 +244,18 @@ export const storageService = {
 
 export const authService = {
   async createUserFromAdmin(email: string, password: string): Promise<void> {
-    const { data: currentSessionData } = await supabase.auth.getSession();
+    const client = getSupabaseClient();
+    const { data: currentSessionData } = await client.auth.getSession();
     const currentSession = currentSessionData.session;
 
-    const { error } = await supabase.auth.signUp({ email, password });
+    const { error } = await client.auth.signUp({ email, password });
     if (error) {
       throw new Error(error.message);
     }
 
     // Keep the current admin logged in after creating a sub-admin account.
     if (currentSession?.access_token && currentSession.refresh_token) {
-      const { error: restoreError } = await supabase.auth.setSession({
+      const { error: restoreError } = await client.auth.setSession({
         access_token: currentSession.access_token,
         refresh_token: currentSession.refresh_token
       });
@@ -256,28 +266,32 @@ export const authService = {
   },
 
   async signUp(email: string, password: string): Promise<void> {
-    const { error } = await supabase.auth.signUp({ email, password });
+    const client = getSupabaseClient();
+    const { error } = await client.auth.signUp({ email, password });
     if (error) {
       throw new Error(error.message);
     }
   },
 
   async signIn(email: string, password: string): Promise<void> {
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const client = getSupabaseClient();
+    const { error } = await client.auth.signInWithPassword({ email, password });
     if (error) {
       throw new Error(error.message);
     }
   },
 
   async signOut(): Promise<void> {
-    const { error } = await supabase.auth.signOut();
+    const client = getSupabaseClient();
+    const { error } = await client.auth.signOut();
     if (error && !/auth session missing/i.test(error.message)) {
       throw new Error(error.message);
     }
   },
 
   async getCurrentUserEmail(): Promise<string | null> {
-    const { data, error } = await supabase.auth.getUser();
+    const client = getSupabaseClient();
+    const { data, error } = await client.auth.getUser();
     if (error) {
       if (/auth session missing/i.test(error.message)) {
         return null;
@@ -288,13 +302,19 @@ export const authService = {
   },
 
   async updatePassword(newPassword: string): Promise<void> {
-    const { error } = await supabase.auth.updateUser({ password: newPassword });
+    const client = getSupabaseClient();
+    const { error } = await client.auth.updateUser({ password: newPassword });
     if (error) {
       throw new Error(error.message);
     }
   },
 
   onAuthStateChange(callback: (email: string | null) => void): () => void {
+    if (!supabase) {
+      callback(null);
+      return () => undefined;
+    }
+
     const { data } = supabase.auth.onAuthStateChange((_event, session) => {
       callback(session?.user?.email ?? null);
     });
