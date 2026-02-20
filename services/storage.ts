@@ -234,6 +234,27 @@ export const storageService = {
 };
 
 export const authService = {
+  async createUserFromAdmin(email: string, password: string): Promise<void> {
+    const { data: currentSessionData } = await supabase.auth.getSession();
+    const currentSession = currentSessionData.session;
+
+    const { error } = await supabase.auth.signUp({ email, password });
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    // Keep the current admin logged in after creating a sub-admin account.
+    if (currentSession?.access_token && currentSession.refresh_token) {
+      const { error: restoreError } = await supabase.auth.setSession({
+        access_token: currentSession.access_token,
+        refresh_token: currentSession.refresh_token
+      });
+      if (restoreError) {
+        throw new Error(`Sub-admin created, but failed to restore admin session: ${restoreError.message}`);
+      }
+    }
+  },
+
   async signUp(email: string, password: string): Promise<void> {
     const { error } = await supabase.auth.signUp({ email, password });
     if (error) {
@@ -261,6 +282,13 @@ export const authService = {
       throw new Error(error.message);
     }
     return data.user?.email ?? null;
+  },
+
+  async updatePassword(newPassword: string): Promise<void> {
+    const { error } = await supabase.auth.updateUser({ password: newPassword });
+    if (error) {
+      throw new Error(error.message);
+    }
   },
 
   onAuthStateChange(callback: (email: string | null) => void): () => void {

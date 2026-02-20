@@ -61,6 +61,9 @@ const Admin: React.FC<AdminProps> = ({ onClose, onDataUpdate }) => {
     email: '',
     enabled: true
   });
+  const [newSubAdminPassword, setNewSubAdminPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [savedSnapshot, setSavedSnapshot] = useState('');
 
   const [editingItem, setEditingItem] = useState<EditableItem | null>(null);
@@ -343,9 +346,15 @@ const Admin: React.FC<AdminProps> = ({ onClose, onDataUpdate }) => {
   const addSubAdmin = async () => {
     const name = newSubAdmin.name.trim();
     const email = newSubAdmin.email.trim().toLowerCase();
+    const subAdminPassword = newSubAdminPassword.trim();
 
-    if (!name || !email) {
-      notify('error', 'Sub-admin name and email are required.');
+    if (!name || !email || !subAdminPassword) {
+      notify('error', 'Sub-admin name, email, and password are required.');
+      return;
+    }
+
+    if (subAdminPassword.length < 8) {
+      notify('error', 'Sub-admin password must be at least 8 characters.');
       return;
     }
 
@@ -374,11 +383,42 @@ const Admin: React.FC<AdminProps> = ({ onClose, onDataUpdate }) => {
     };
     setAdminProfile(updatedProfile);
     try {
+      await authService.createUserFromAdmin(email, subAdminPassword);
       await storageService.saveAdminProfile(updatedProfile);
       setNewSubAdmin({ name: '', email: '', enabled: true });
+      setNewSubAdminPassword('');
       notify('success', 'Sub-admin added and saved.');
     } catch (error) {
       notify('error', error instanceof Error ? error.message : 'Failed to save sub-admin.');
+    }
+  };
+
+  const changeMyPassword = async () => {
+    const trimmedNewPassword = newPassword.trim();
+    const trimmedConfirmPassword = confirmPassword.trim();
+
+    if (!trimmedNewPassword || !trimmedConfirmPassword) {
+      notify('error', 'Enter and confirm your new password.');
+      return;
+    }
+
+    if (trimmedNewPassword.length < 8) {
+      notify('error', 'New password must be at least 8 characters.');
+      return;
+    }
+
+    if (trimmedNewPassword !== trimmedConfirmPassword) {
+      notify('error', 'Password confirmation does not match.');
+      return;
+    }
+
+    try {
+      await authService.updatePassword(trimmedNewPassword);
+      setNewPassword('');
+      setConfirmPassword('');
+      notify('success', 'Password updated successfully.');
+    } catch (error) {
+      notify('error', error instanceof Error ? error.message : 'Could not update password.');
     }
   };
 
@@ -1184,6 +1224,29 @@ const Admin: React.FC<AdminProps> = ({ onClose, onDataUpdate }) => {
                       <p className="text-xs text-slate-500">{adminProfile.email || 'Not set'}</p>
                     </div>
                   </div>
+                  <div className="border-t border-slate-200 pt-4 space-y-3">
+                    <p className="text-xs uppercase tracking-widest font-bold text-slate-500">Change My Password</p>
+                    <input
+                      type="password"
+                      placeholder="New password"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      className="w-full md:w-[22rem] bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:border-terracotta outline-none"
+                    />
+                    <input
+                      type="password"
+                      placeholder="Confirm new password"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      className="w-full md:w-[22rem] bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:border-terracotta outline-none"
+                    />
+                    <button
+                      onClick={() => void changeMyPassword()}
+                      className="px-4 py-2 rounded-lg border border-slate-300 text-xs font-bold text-slate-700 hover:bg-slate-100"
+                    >
+                      Update Password
+                    </button>
+                  </div>
                 </div>
                 <button
                   onClick={() => startEdit(adminProfile)}
@@ -1244,6 +1307,13 @@ const Admin: React.FC<AdminProps> = ({ onClose, onDataUpdate }) => {
                       placeholder="Email"
                       value={newSubAdmin.email}
                       onChange={(e) => setNewSubAdmin((prev) => ({ ...prev, email: e.target.value }))}
+                      className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:border-terracotta outline-none"
+                    />
+                    <input
+                      type="password"
+                      placeholder="Password (min 8 chars)"
+                      value={newSubAdminPassword}
+                      onChange={(e) => setNewSubAdminPassword(e.target.value)}
                       className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:border-terracotta outline-none"
                     />
                   </div>
