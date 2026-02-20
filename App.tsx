@@ -4,6 +4,7 @@ import Navigation from './components/Navigation';
 import AboutSection from './components/AboutSection';
 import Admin from './components/Admin';
 import { storageService } from './services/storage';
+import { CONTACT_DETAILS } from './constants';
 import { AboutContent, ContactDetails, Project, Service, SocialLink, TeamMember, Testimonial, VlogEntry } from './types';
 
 const ADMIN_PORTAL_OPEN_KEY = 'miledesigns_admin_portal_open';
@@ -434,8 +435,14 @@ const App: React.FC = () => {
       });
   }, [socialLinks]);
 
-  const inquiryEmail = contactDetails.inquiryEmail?.trim() || '';
-  const rawInquiryWhatsApp = contactDetails.inquiryWhatsAppNumber || import.meta.env.VITE_INQUIRY_WHATSAPP_NUMBER || '';
+  const inquiryEmail =
+    contactDetails.inquiryEmail?.trim() ||
+    import.meta.env.VITE_INQUIRY_EMAIL ||
+    CONTACT_DETAILS.inquiryEmail;
+  const rawInquiryWhatsApp =
+    contactDetails.inquiryWhatsAppNumber ||
+    import.meta.env.VITE_INQUIRY_WHATSAPP_NUMBER ||
+    CONTACT_DETAILS.inquiryWhatsAppNumber;
   const inquiryWhatsAppNumber = rawInquiryWhatsApp.replace(/\D/g, '');
   const whatsappUrl = inquiryWhatsAppNumber ? `https://wa.me/${inquiryWhatsAppNumber}` : '';
   const gmailUrl = inquiryEmail
