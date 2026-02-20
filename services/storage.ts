@@ -271,7 +271,7 @@ export const authService = {
 
   async signOut(): Promise<void> {
     const { error } = await supabase.auth.signOut();
-    if (error) {
+    if (error && !/auth session missing/i.test(error.message)) {
       throw new Error(error.message);
     }
   },
@@ -279,6 +279,9 @@ export const authService = {
   async getCurrentUserEmail(): Promise<string | null> {
     const { data, error } = await supabase.auth.getUser();
     if (error) {
+      if (/auth session missing/i.test(error.message)) {
+        return null;
+      }
       throw new Error(error.message);
     }
     return data.user?.email ?? null;
