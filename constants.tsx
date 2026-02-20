@@ -194,6 +194,7 @@ export const ABOUT_CONTENT: AboutContent = {
   homeBackgroundImages: [
     'https://images.unsplash.com/photo-1487958449943-2429e8be8625?auto=format&fit=crop&q=80&w=2070'
   ],
+  certificateImages: [],
   imageUrl: 'https://images.unsplash.com/photo-1503387762-592dee58c460?auto=format&fit=crop&q=80&w=2000',
   visionText: 'Sustainable. Functional. Aesthetic.',
   ctaText: 'Ready to bring your vision to life?',

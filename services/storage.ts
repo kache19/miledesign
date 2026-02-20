@@ -59,7 +59,8 @@ const normalizeAboutContent = (parsed: Partial<AboutContent> | null | undefined)
   homeBackgroundImages:
     Array.isArray(parsed?.homeBackgroundImages) && parsed!.homeBackgroundImages.length > 0
       ? parsed!.homeBackgroundImages
-      : ABOUT_CONTENT.homeBackgroundImages
+      : ABOUT_CONTENT.homeBackgroundImages,
+  certificateImages: Array.isArray(parsed?.certificateImages) ? parsed!.certificateImages : ABOUT_CONTENT.certificateImages
 });
 
 const normalizeSocialLinks = (parsed: SocialLink[] | null | undefined): SocialLink[] => {

@@ -35,6 +35,8 @@ const AboutSection: React.FC<AboutSectionProps> = ({ content }) => {
         { value: '98', suffix: '%', label: 'Client Satisfaction', description: 'Rating Score' },
         { value: '35', suffix: '', label: 'Design Awards', description: 'Industry Recognition' }
       ];
+  const badge = content.badge?.trim() || 'About Us';
+  const certificateImages = content.certificateImages ?? [];
 
   const pillars = [
     {
@@ -86,7 +88,7 @@ const AboutSection: React.FC<AboutSectionProps> = ({ content }) => {
         {/* Header Section */}
         <div className={`text-center max-w-4xl mx-auto mb-20 transition-all duration-1000 transform ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
           <span className="inline-block text-xs font-bold text-terracotta uppercase tracking-[0.3em] mb-4 px-4 py-2 bg-terracotta/10 rounded-full">
-            {content.badge}
+            {badge}
           </span>
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-slate-900 mb-6 leading-tight">
             {content.headingPrefix} <span className="italic text-terracotta relative">
@@ -159,67 +161,32 @@ const AboutSection: React.FC<AboutSectionProps> = ({ content }) => {
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900/30 via-transparent to-transparent" />
               </div>
               
-              {/* Floating Badge */}
-              <div className="absolute -bottom-8 -left-8 bg-white rounded-2xl p-6 shadow-xl z-20 hidden md:block animate-bounce-slow">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-terracotta rounded-full flex items-center justify-center">
-                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                  </div>
-                  <div>
-                    <div className="text-sm font-bold text-slate-900">Award Winning</div>
-                    <div className="text-xs text-slate-500">Best Architecture 2023</div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Vision Card */}
-              <div className="absolute top-1/2 -right-6 md:-right-12 -translate-y-1/2 bg-slate-900 rounded-3xl p-6 md:p-8 shadow-2xl z-20 hidden md:block transform hover:scale-105 transition-transform duration-300">
-                <div className="text-terracotta text-2xl mb-3 italic font-serif">Our Vision</div>
-                <div className="flex items-center gap-2 mb-3">
-                  <span className="w-2 h-2 bg-skyblue rounded-full animate-pulse" />
-                  <span className="text-skyblue/80 text-xs uppercase tracking-widest font-bold">Core Values</span>
-                </div>
-                <p className="text-white/90 text-sm leading-relaxed">
-                  {content.visionText}
-                </p>
-              </div>
-
               {/* Decorative blur elements */}
               <div className="absolute -top-10 -right-10 w-40 h-40 bg-terracotta/20 rounded-full blur-3xl -z-10" />
               <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-skyblue/20 rounded-full blur-3xl -z-10" />
             </div>
-
-            {/* Mobile Cards */}
-            <div className="mt-5 space-y-3 md:hidden">
-              <div className="bg-white rounded-2xl p-4 shadow-lg border border-slate-100">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-terracotta rounded-full flex items-center justify-center">
-                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                  </div>
-                  <div>
-                    <div className="text-sm font-bold text-slate-900">Award Winning</div>
-                    <div className="text-xs text-slate-500">Best Architecture 2023</div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-slate-900 rounded-2xl p-5 shadow-lg">
-                <div className="text-terracotta text-xl mb-2 italic font-serif">Our Vision</div>
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="w-2 h-2 bg-skyblue rounded-full animate-pulse" />
-                  <span className="text-skyblue/80 text-[11px] uppercase tracking-widest font-bold">Core Values</span>
-                </div>
-                <p className="text-white/90 text-sm leading-relaxed">
-                  {content.visionText}
-                </p>
-              </div>
-            </div>
           </div>
         </div>
+
+        {certificateImages.length > 0 && (
+          <div className={`mb-24 transition-all duration-1000 delay-500 transform ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+            <div className="text-center mb-8">
+              <h3 className="text-2xl md:text-3xl font-serif font-bold text-slate-900 mb-3">Certificates</h3>
+              <p className="text-slate-600">Our recognized certifications and accreditations.</p>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+              {certificateImages.map((image, index) => (
+                <div key={`${image}-${index}`} className="rounded-2xl border border-slate-200 bg-white p-2 shadow-sm hover:shadow-lg transition-shadow">
+                  <img
+                    src={image}
+                    alt={`Certificate ${index + 1}`}
+                    className="h-36 md:h-44 w-full object-cover rounded-xl bg-slate-50"
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
         
         {/* Pillars Section */}
         <div className={`transition-all duration-1000 delay-600 transform ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>

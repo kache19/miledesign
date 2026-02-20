@@ -52,6 +52,7 @@ const App: React.FC = () => {
     bodyText: '',
     stats: [],
     homeBackgroundImages: [],
+    certificateImages: [],
     imageUrl: '',
     visionText: '',
     ctaText: '',

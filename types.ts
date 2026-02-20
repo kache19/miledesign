@@ -102,6 +102,7 @@ export interface AboutContent {
   bodyText: string;
   stats: AboutStat[];
   homeBackgroundImages: string[];
+  certificateImages: string[];
   imageUrl: string;
   visionText: string;
   ctaText: string;

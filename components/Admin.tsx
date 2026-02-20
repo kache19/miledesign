@@ -12,15 +12,6 @@ type AdminTab = 'projects' | 'services' | 'testimonials' | 'socials' | 'team' | 
 type EditableItem = Project | Service | Testimonial | SocialLink | TeamMember | VlogEntry | ContactDetails | AboutContent | AdminProfile;
 
 const Admin: React.FC<AdminProps> = ({ onClose, onDataUpdate }) => {
-  const supabaseProjectHost = useMemo(() => {
-    const rawUrl = import.meta.env.VITE_SUPABASE_URL as string | undefined;
-    if (!rawUrl) return 'Not configured';
-    try {
-      return new URL(rawUrl).host;
-    } catch {
-      return rawUrl;
-    }
-  }, []);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loginEmail, setLoginEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -53,6 +44,7 @@ const Admin: React.FC<AdminProps> = ({ onClose, onDataUpdate }) => {
     bodyText: '',
     stats: [],
     homeBackgroundImages: [],
+    certificateImages: [],
     imageUrl: '',
     visionText: '',
     ctaText: '',
@@ -755,6 +747,35 @@ const Admin: React.FC<AdminProps> = ({ onClose, onDataUpdate }) => {
     }
   };
 
+  const handleCertificateUpload = async (files: FileList | null) => {
+    if (!files || files.length === 0 || !editingItem) return;
+    const currentImages = (editingItem as AboutContent).certificateImages || [];
+    const uploadedImages: string[] = [];
+
+    for (const file of Array.from(files)) {
+      if (!file.type.startsWith('image/')) {
+        notify('error', `Skipped ${file.name}: not an image file.`);
+        continue;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        notify('error', `Skipped ${file.name}: must be under 5MB.`);
+        continue;
+      }
+
+      try {
+        const dataUrl = await readFileAsDataUrl(file);
+        uploadedImages.push(dataUrl);
+      } catch {
+        notify('error', `Skipped ${file.name}: could not process file.`);
+      }
+    }
+
+    if (uploadedImages.length > 0) {
+      updateEditingField('certificateImages', [...currentImages, ...uploadedImages]);
+      notify('success', `${uploadedImages.length} certificate image(s) uploaded.`);
+    }
+  };
+
   if (!isLoggedIn) {
     return (
       <div className="fixed inset-0 z-[100] bg-slate-950 flex items-center justify-center p-4">
@@ -801,9 +822,6 @@ const Admin: React.FC<AdminProps> = ({ onClose, onDataUpdate }) => {
             <button type="button" onClick={handleExitAdmin} className="w-full text-slate-500 text-sm py-2 hover:text-white transition-colors">
               Cancel
             </button>
-            <p className="text-[11px] text-slate-500 text-center">
-              Connected Supabase project: <span className="text-slate-300">{supabaseProjectHost}</span>
-            </p>
           </form>
         </div>
       </div>
@@ -2129,6 +2147,43 @@ const Admin: React.FC<AdminProps> = ({ onClose, onDataUpdate }) => {
                           alt="About preview"
                           className="mt-3 h-28 w-full sm:w-44 object-cover rounded-lg border border-slate-200 bg-white"
                         />
+                      )}
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Certificate Images</label>
+                    <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-3">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        onChange={(e) => void handleCertificateUpload(e.target.files)}
+                        className="block w-full text-xs text-slate-600 file:mr-3 file:rounded-lg file:border-0 file:bg-terracotta/10 file:px-3 file:py-2 file:text-xs file:font-semibold file:text-terracotta hover:file:bg-terracotta/20"
+                      />
+                      {(editingItem as AboutContent).certificateImages.length > 0 && (
+                        <div className="mt-3 grid grid-cols-2 sm:grid-cols-3 gap-3">
+                          {(editingItem as AboutContent).certificateImages.map((image, index) => (
+                            <div key={`${image}-${index}`} className="relative group">
+                              <img
+                                src={image}
+                                alt={`Certificate ${index + 1}`}
+                                className="h-24 w-full object-cover rounded-lg border border-slate-200 bg-white"
+                              />
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const next = [...(editingItem as AboutContent).certificateImages];
+                                  next.splice(index, 1);
+                                  updateEditingField('certificateImages', next);
+                                }}
+                                className="absolute top-1.5 right-1.5 px-2 py-1 text-[10px] font-bold rounded-md bg-slate-950/75 text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                              >
+                                Remove
+                              </button>
+                            </div>
+                          ))}
+                        </div>
                       )}
                     </div>
                   </div>
