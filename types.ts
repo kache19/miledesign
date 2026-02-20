@@ -52,8 +52,44 @@ export interface ContactDetails {
   id: string;
   location: string;
   phoneNumbers: string[];
+  inquiryEmail: string;
+  inquiryWhatsAppNumber: string;
   showFloatingWhatsApp: boolean;
   floatingWhatsAppMessage: string;
+}
+
+export interface AboutStat {
+  value: string;
+  suffix: string;
+  label: string;
+  description: string;
+}
+
+export interface SubAdmin {
+  id: string;
+  name: string;
+  email: string;
+  enabled: boolean;
+}
+
+export interface AdminProfile {
+  id: string;
+  name: string;
+  email: string;
+  avatarUrl: string;
+  subAdmins: SubAdmin[];
+}
+
+export interface SiteContentData {
+  projects: Project[];
+  services: Service[];
+  testimonials: Testimonial[];
+  socialLinks: SocialLink[];
+  contactDetails: ContactDetails;
+  aboutContent: AboutContent;
+  teamMembers: TeamMember[];
+  vlogEntries: VlogEntry[];
+  adminProfile: AdminProfile;
 }
 
 export interface AboutContent {
@@ -64,6 +100,8 @@ export interface AboutContent {
   headingSuffix: string;
   introText: string;
   bodyText: string;
+  stats: AboutStat[];
+  homeBackgroundImages: string[];
   imageUrl: string;
   visionText: string;
   ctaText: string;

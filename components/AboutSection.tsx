@@ -27,12 +27,14 @@ const AboutSection: React.FC<AboutSectionProps> = ({ content }) => {
     return () => observer.disconnect();
   }, []);
 
-  const stats = [
-    { value: 15, suffix: '+', label: 'Years of Excellence', description: 'Since 2008' },
-    { value: 450, suffix: '+', label: 'Projects Completed', description: 'Successful Handover' },
-    { value: 98, suffix: '%', label: 'Client Satisfaction', description: 'Rating Score' },
-    { value: 35, suffix: '', label: 'Design Awards', description: 'Industry Recognition' },
-  ];
+  const stats = content.stats.length > 0
+    ? content.stats
+    : [
+        { value: '15', suffix: '+', label: 'Years of Excellence', description: 'Since 2008' },
+        { value: '450', suffix: '+', label: 'Projects Completed', description: 'Successful Handover' },
+        { value: '98', suffix: '%', label: 'Client Satisfaction', description: 'Rating Score' },
+        { value: '35', suffix: '', label: 'Design Awards', description: 'Industry Recognition' }
+      ];
 
   const pillars = [
     {

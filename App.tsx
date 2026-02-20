@@ -1,12 +1,13 @@
 
 import React, { useEffect, useRef, useState, useMemo } from 'react';
 import Navigation from './components/Navigation';
-import CostCalculator from './components/CostCalculator';
 import AboutSection from './components/AboutSection';
 import Admin from './components/Admin';
 import { storageService } from './services/storage';
-import { getSupabaseClient, isSupabaseConfigured } from './services/supabase';
 import { AboutContent, ContactDetails, Project, Service, SocialLink, TeamMember, Testimonial, VlogEntry } from './types';
+
+const ADMIN_PORTAL_OPEN_KEY = 'miledesigns_admin_portal_open';
+const ADMIN_PORTAL_ENABLED = import.meta.env.VITE_ENABLE_ADMIN === 'true';
 
 const App: React.FC = () => {
   const portfolioRef = useRef<HTMLDivElement | null>(null);
@@ -15,7 +16,10 @@ const App: React.FC = () => {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [activeFilter, setActiveFilter] = useState<string>('All');
   const [fullScreenImage, setFullScreenImage] = useState<string | null>(null);
-  const [isAdminOpen, setIsAdminOpen] = useState(false);
+  const [isAdminOpen, setIsAdminOpen] = useState<boolean>(() => {
+    if (typeof window === 'undefined' || !ADMIN_PORTAL_ENABLED) return false;
+    return localStorage.getItem(ADMIN_PORTAL_OPEN_KEY) === 'true';
+  });
   const [isLoading, setIsLoading] = useState(true);
 
   // State for dynamic data
@@ -29,6 +33,8 @@ const App: React.FC = () => {
     id: 'contact-details',
     location: '',
     phoneNumbers: [],
+    inquiryEmail: '',
+    inquiryWhatsAppNumber: '',
     showFloatingWhatsApp: true,
     floatingWhatsAppMessage: 'Hi, am here to serve you!'
   });
@@ -40,11 +46,15 @@ const App: React.FC = () => {
     headingSuffix: '',
     introText: '',
     bodyText: '',
+    stats: [],
+    homeBackgroundImages: [],
     imageUrl: '',
     visionText: '',
     ctaText: '',
     ctaButtonText: ''
   });
+  const [heroSlideIndex, setHeroSlideIndex] = useState(0);
+  const [heroTransitionEnabled, setHeroTransitionEnabled] = useState(true);
 
   // Contact form state
   const [contactForm, setContactForm] = useState({
@@ -72,17 +82,20 @@ const App: React.FC = () => {
     });
   };
 
-  const loadData = (withLoader = true) => {
+  const loadData = async (withLoader = true) => {
     if (withLoader) setIsLoading(true);
     try {
-      setProjects(storageService.getProjects());
-      setServices(storageService.getServices());
-      setTestimonials(storageService.getTestimonials());
-      setSocialLinks(storageService.getSocialLinks());
-      setTeamMembers(storageService.getTeamMembers());
-      setVlogEntries(storageService.getVlogEntries());
-      setContactDetails(storageService.getContactDetails());
-      setAboutContent(storageService.getAboutContent());
+      const data = await storageService.getAllContent();
+      setProjects(data.projects);
+      setServices(data.services);
+      setTestimonials(data.testimonials);
+      setSocialLinks(data.socialLinks);
+      setTeamMembers(data.teamMembers);
+      setVlogEntries(data.vlogEntries);
+      setContactDetails(data.contactDetails);
+      setAboutContent(data.aboutContent);
+    } catch (error) {
+      console.error('Failed to load site content:', error);
     } finally {
       if (withLoader) {
         setTimeout(() => setIsLoading(false), 500);
@@ -90,39 +103,64 @@ const App: React.FC = () => {
     }
   };
 
-  const handleContactSubmit = async (e: React.FormEvent) => {
+  const handleContactSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     setSubmitMessage(null);
 
     try {
-      if (!isSupabaseConfigured) {
-        setSubmitMessage('Supabase is not configured. Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.');
+      const inquiryEmail = contactDetails.inquiryEmail || import.meta.env.VITE_INQUIRY_EMAIL || 'info@miledesigns.com';
+      const rawWhatsAppNumber = contactDetails.inquiryWhatsAppNumber || import.meta.env.VITE_INQUIRY_WHATSAPP_NUMBER || '';
+      const inquiryWhatsAppNumber = rawWhatsAppNumber.replace(/\D/g, '');
+
+      const subject = `New Inquiry: ${contactForm.firstName} ${contactForm.lastName} (${contactForm.serviceType})`;
+      const body = [
+        'New inquiry details:',
+        '',
+        `First Name: ${contactForm.firstName}`,
+        `Last Name: ${contactForm.lastName}`,
+        `Email: ${contactForm.email}`,
+        `Phone: ${contactForm.phone}`,
+        `Service Needed: ${contactForm.serviceType}`,
+        `Budget Range: ${contactForm.budgetRange}`,
+        `Timeline: ${contactForm.timeline}`,
+        '',
+        'Project Details:',
+        contactForm.message
+      ].join('\n');
+
+      const mailtoUrl = inquiryEmail
+        ? `mailto:${encodeURIComponent(inquiryEmail)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
+        : null;
+      const whatsappUrl = inquiryWhatsAppNumber
+        ? `https://wa.me/${inquiryWhatsAppNumber}?text=${encodeURIComponent(body)}`
+        : null;
+
+      if (!mailtoUrl && !whatsappUrl) {
+        setSubmitMessage('Inquiry contact is not configured. Add inquiry email or WhatsApp number in Admin Portal > Contact.');
         return;
       }
 
-      const supabase = getSupabaseClient();
-      const { error } = await supabase.from('contact_inquiries').insert({
-        first_name: contactForm.firstName,
-        last_name: contactForm.lastName,
-        email: contactForm.email,
-        phone: contactForm.phone,
-        service_type: contactForm.serviceType,
-        budget_range: contactForm.budgetRange,
-        timeline: contactForm.timeline,
-        message: contactForm.message
-      });
-
-      if (error) {
-        throw error;
+      if (whatsappUrl) {
+        window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
       }
 
-      setSubmitMessage('Thank you! We\'ll be in touch within 24 hours.');
+      if (mailtoUrl) {
+        window.location.href = mailtoUrl;
+      }
+
+      if (mailtoUrl && whatsappUrl) {
+        setSubmitMessage('Your email app and WhatsApp have been opened with your inquiry details.');
+      } else if (mailtoUrl) {
+        setSubmitMessage('Your email app has been opened with your inquiry details.');
+      } else {
+        setSubmitMessage('WhatsApp has been opened with your inquiry details.');
+      }
       resetContactForm();
       setTimeout(() => setSubmitMessage(null), 5000);
     } catch (error) {
-      console.error('Failed to submit contact form:', error);
-      setSubmitMessage('Unable to submit right now. Please try again in a moment.');
+      console.error('Failed to open inquiry channels:', error);
+      setSubmitMessage('Unable to open email/WhatsApp right now. Please try again in a moment.');
     } finally {
       setIsSubmitting(false);
     }
@@ -133,8 +171,51 @@ const App: React.FC = () => {
   };
 
   useEffect(() => {
-    loadData();
+    void loadData();
   }, []);
+
+  useEffect(() => {
+    if (!ADMIN_PORTAL_ENABLED) return;
+    localStorage.setItem(ADMIN_PORTAL_OPEN_KEY, isAdminOpen ? 'true' : 'false');
+  }, [isAdminOpen]);
+
+  const heroImages = useMemo(() => {
+    const images = aboutContent.homeBackgroundImages
+      .map((item) => item.trim())
+      .filter((item) => item.length > 0);
+    return images.length > 0
+      ? images
+      : ['https://images.unsplash.com/photo-1487958449943-2429e8be8625?auto=format&fit=crop&q=80&w=2070'];
+  }, [aboutContent.homeBackgroundImages]);
+
+  const hasHeroCarousel = heroImages.length > 1;
+  const heroTrackImages = hasHeroCarousel ? [...heroImages, heroImages[0]] : heroImages;
+
+  useEffect(() => {
+    if (!hasHeroCarousel) {
+      setHeroSlideIndex(0);
+      return;
+    }
+
+    const interval = window.setInterval(() => {
+      setHeroSlideIndex((prev) => prev + 1);
+    }, 5000);
+
+    return () => window.clearInterval(interval);
+  }, [hasHeroCarousel, heroImages.length]);
+
+  useEffect(() => {
+    if (!hasHeroCarousel) return;
+    if (heroSlideIndex !== heroImages.length) return;
+
+    const resetTimer = window.setTimeout(() => {
+      setHeroTransitionEnabled(false);
+      setHeroSlideIndex(0);
+      window.setTimeout(() => setHeroTransitionEnabled(true), 40);
+    }, 850);
+
+    return () => window.clearTimeout(resetTimer);
+  }, [hasHeroCarousel, heroSlideIndex, heroImages.length]);
 
   const scrollTo = (id: string) => {
     if (selectedProject) {
@@ -353,8 +434,13 @@ const App: React.FC = () => {
       });
   }, [socialLinks]);
 
-  const whatsappUrl = socialLinks.find((item) => item.platform === 'WhatsApp' && item.enabled)?.url;
-  const gmailUrl = 'https://mail.google.com/mail/?view=cm&fs=1&to=info@miledesigns.com';
+  const inquiryEmail = contactDetails.inquiryEmail?.trim() || '';
+  const rawInquiryWhatsApp = contactDetails.inquiryWhatsAppNumber || import.meta.env.VITE_INQUIRY_WHATSAPP_NUMBER || '';
+  const inquiryWhatsAppNumber = rawInquiryWhatsApp.replace(/\D/g, '');
+  const whatsappUrl = inquiryWhatsAppNumber ? `https://wa.me/${inquiryWhatsAppNumber}` : '';
+  const gmailUrl = inquiryEmail
+    ? `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(inquiryEmail)}`
+    : '';
   const mapSearchQuery = encodeURIComponent(contactDetails.location || 'New York, NY');
   const mapEmbedUrl = `https://maps.google.com/maps?q=${mapSearchQuery}&t=&z=14&ie=UTF8&iwloc=&output=embed`;
   const mapOpenUrl = `https://www.google.com/maps/search/?api=1&query=${mapSearchQuery}`;
@@ -368,22 +454,24 @@ const App: React.FC = () => {
           {contactDetails.floatingWhatsAppMessage}
         </div>
         <div className="flex items-center gap-2">
-          <a
-            href={gmailUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Send Email via Gmail"
-            title="Send Email via Gmail"
-            className="h-14 w-14 rounded-full bg-white border border-slate-200 shadow-xl shadow-slate-300/30 flex items-center justify-center hover:scale-105 transition-transform animate-bounce-slow"
-            style={{ animationDelay: '0.15s' }}
-          >
-            <svg className="w-7 h-7" viewBox="0 0 24 24" aria-hidden="true">
-              <path fill="#EA4335" d="M3 6.75v10.5h3V9.6L12 14l6-4.4v7.65h3V6.75L12 13 3 6.75z" />
-              <path fill="#4285F4" d="M21 6.75v10.5h-3V9.6z" />
-              <path fill="#34A853" d="M3 17.25h18V20H3z" />
-              <path fill="#FBBC04" d="M3 6.75L12 13l9-6.25L18.9 5H5.1z" />
-            </svg>
-          </a>
+          {gmailUrl && (
+            <a
+              href={gmailUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Send Email via Gmail"
+              title="Send Email via Gmail"
+              className="h-14 w-14 rounded-full bg-white border border-slate-200 shadow-xl shadow-slate-300/30 flex items-center justify-center hover:scale-105 transition-transform animate-bounce-slow"
+              style={{ animationDelay: '0.15s' }}
+            >
+              <svg className="w-7 h-7" viewBox="0 0 24 24" aria-hidden="true">
+                <path fill="#EA4335" d="M3 6.75v10.5h3V9.6L12 14l6-4.4v7.65h3V6.75L12 13 3 6.75z" />
+                <path fill="#4285F4" d="M21 6.75v10.5h-3V9.6z" />
+                <path fill="#34A853" d="M3 17.25h18V20H3z" />
+                <path fill="#FBBC04" d="M3 6.75L12 13l9-6.25L18.9 5H5.1z" />
+              </svg>
+            </a>
+          )}
           {whatsappUrl && (
             <a
               href={whatsappUrl}
@@ -532,23 +620,23 @@ const App: React.FC = () => {
         {renderLightBox()}
         {renderFloatingSupportActions()}
 
-        <footer className="bg-slate-950 text-slate-500 py-12 border-t border-slate-900 mt-auto">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <div className="flex items-center justify-center space-x-2 mb-4">
+                <footer className="bg-slate-950 text-slate-500 py-12 border-t border-slate-900 mt-auto">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex flex-col md:flex-row items-center justify-center gap-3 md:gap-6 text-center">
               <span className="text-2xl font-serif font-bold text-white tracking-tighter">MILEDESIGNS</span>
+              <span className="text-[10px] md:text-xs uppercase tracking-[0.3em] font-bold">(c) 2026 Miledesigns</span>
+              <p className="text-[10px] md:text-xs uppercase tracking-[0.2em] font-semibold text-slate-400">
+                Developer:{' '}
+                <a
+                  href="https://www.kachehub.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-slate-300 hover:text-terracotta transition-colors"
+                >
+                  KACHEHUB
+                </a>
+              </p>
             </div>
-            <p className="text-[10px] md:text-xs uppercase tracking-[0.3em] font-bold">© 2026 Miledesigns</p>
-            <p className="mt-3 text-[10px] md:text-xs uppercase tracking-[0.2em] font-semibold text-slate-400">
-              Developer:{' '}
-              <a
-                href="https://www.kachehub.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-slate-300 hover:text-terracotta transition-colors"
-              >
-                KACHEHUB
-              </a>
-            </p>
           </div>
         </footer>
       </div>
@@ -564,11 +652,19 @@ const App: React.FC = () => {
         <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/40 to-transparent z-10"></div>
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-slate-950 z-10"></div>
-          <img 
-            src="https://images.unsplash.com/photo-1487958449943-2429e8be8625?auto=format&fit=crop&q=80&w=2070" 
-            className="w-full h-full object-cover opacity-60 scale-105 animate-slow-zoom"
-            alt="Minimalist Architecture"
-          />
+          <div
+            className={`h-full w-full flex ${heroTransitionEnabled ? 'transition-transform duration-700 ease-in-out' : ''}`}
+            style={{ transform: `translateX(-${heroSlideIndex * 100}%)` }}
+          >
+            {heroTrackImages.map((image, index) => (
+              <img
+                key={`${image}-${index}`}
+                src={image}
+                className="w-full h-full min-w-full object-cover opacity-60 scale-105 animate-slow-zoom"
+                alt="Minimalist Architecture"
+              />
+            ))}
+          </div>
         </div>
 
         <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-20 pb-20">
@@ -756,9 +852,9 @@ const App: React.FC = () => {
             <h3 className="text-2xl md:text-3xl font-bold text-slate-900">Experts Behind Every Build</h3>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
+          <div className="flex md:grid md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6 overflow-x-auto md:overflow-visible snap-x snap-mandatory md:snap-none pb-2 md:pb-0 -mx-4 px-4 sm:mx-0 sm:px-0">
             {teamMembers.map((member) => (
-              <article key={member.id} className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow">
+              <article key={member.id} className="min-w-[85%] sm:min-w-[70%] md:min-w-0 snap-start bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow">
                 <img src={member.imageUrl} alt={member.name} className="w-full h-60 object-cover" />
                 <div className="p-5">
                   <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-terracotta mb-1">{member.role}</p>
@@ -779,14 +875,14 @@ const App: React.FC = () => {
             <h3 className="text-2xl md:text-3xl font-bold text-slate-900">Watch How We Build</h3>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
+          <div className="flex md:grid md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6 overflow-x-auto md:overflow-visible snap-x snap-mandatory md:snap-none pb-2 md:pb-0 -mx-4 px-4 sm:mx-0 sm:px-0">
             {vlogEntries.map((entry) => (
               <a
                 key={entry.id}
                 href={entry.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group bg-slate-50 border border-slate-200 rounded-2xl overflow-hidden hover:shadow-lg transition-shadow"
+                className="group min-w-[85%] sm:min-w-[70%] md:min-w-0 snap-start bg-slate-50 border border-slate-200 rounded-2xl overflow-hidden hover:shadow-lg transition-shadow"
               >
                 <div className="relative">
                   <img src={entry.thumbnailUrl} alt={entry.title} className="w-full h-52 object-cover group-hover:scale-105 transition-transform duration-500" />
@@ -834,19 +930,6 @@ const App: React.FC = () => {
             >
               Open in Google Maps
             </a>
-          </div>
-        </div>
-      </section>
-
-      {/* Estimator Section */}
-      <section id="calculator" className="py-16 md:py-24 bg-slate-50">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-xs font-bold text-terracotta uppercase tracking-[0.3em] mb-2">Planning</h2>
-            <h3 className="text-2xl md:text-4xl font-serif font-bold text-slate-900">Capital Projection</h3>
-          </div>
-          <div className="reveal-item">
-            <CostCalculator />
           </div>
         </div>
       </section>
@@ -1052,32 +1135,33 @@ const App: React.FC = () => {
       {renderLightBox()}
       {renderFloatingSupportActions()}
 
-      {isAdminOpen && <Admin onClose={() => setIsAdminOpen(false)} onDataUpdate={() => loadData(false)} />}
+      {ADMIN_PORTAL_ENABLED && isAdminOpen && <Admin onClose={() => setIsAdminOpen(false)} onDataUpdate={() => void loadData(false)} />}
 
-      <footer className="bg-slate-950 text-slate-500 py-10 border-t border-slate-900 shrink-0">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="flex flex-col md:flex-row items-center justify-center space-y-3 md:space-y-0 md:space-x-6 mb-8">
+            <footer className="bg-slate-950 text-slate-500 py-10 border-t border-slate-900 shrink-0">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col md:flex-row items-center justify-center gap-3 md:gap-6 text-center">
             <span className="text-xl md:text-2xl font-serif font-bold text-white tracking-tighter">MILEDESIGNS</span>
-            <div className="hidden md:block h-5 w-px bg-slate-800"></div>
-            <span className="text-xs uppercase tracking-[0.2em] font-bold text-slate-500">© 2026 Miledesigns</span>
+            <span className="text-xs uppercase tracking-[0.2em] font-bold text-slate-500">(c) 2026 Miledesigns</span>
+            <p className="text-[10px] md:text-xs uppercase tracking-[0.2em] font-semibold text-slate-400">
+              Developer:{' '}
+              <a
+                href="https://www.kachehub.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-slate-300 hover:text-terracotta transition-colors"
+              >
+                KACHEHUB
+              </a>
+            </p>
+            {ADMIN_PORTAL_ENABLED && (
+              <button
+                onClick={() => setIsAdminOpen(true)}
+                className="text-[10px] font-bold text-slate-700 uppercase tracking-widest hover:text-terracotta transition-colors"
+              >
+                Admin Portal
+              </button>
+            )}
           </div>
-          <p className="mb-6 text-[10px] md:text-xs uppercase tracking-[0.2em] font-semibold text-slate-400">
-            Developer:{' '}
-            <a
-              href="https://www.kachehub.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-slate-300 hover:text-terracotta transition-colors"
-            >
-              KACHEHUB
-            </a>
-          </p>
-          <button 
-            onClick={() => setIsAdminOpen(true)}
-            className="text-[10px] font-bold text-slate-700 uppercase tracking-widest hover:text-terracotta transition-colors"
-          >
-            Admin Portal
-          </button>
         </div>
       </footer>
     </div>
@@ -1085,3 +1169,4 @@ const App: React.FC = () => {
 };
 
 export default App;
+

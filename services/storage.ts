@@ -1,95 +1,266 @@
+import {
+  AboutContent,
+  AdminProfile,
+  ContactDetails,
+  Project,
+  Service,
+  SiteContentData,
+  SocialLink,
+  SubAdmin,
+  TeamMember,
+  Testimonial,
+  VlogEntry
+} from '../types';
+import {
+  ABOUT_CONTENT,
+  ADMIN_PROFILE,
+  CONTACT_DETAILS,
+  PROJECTS,
+  SERVICES,
+  SOCIAL_LINKS,
+  TEAM_MEMBERS,
+  TESTIMONIALS,
+  VLOG_ENTRIES
+} from '../constants';
+import { supabase } from './supabase';
 
-import { AboutContent, ContactDetails, Project, Service, SocialLink, TeamMember, Testimonial, VlogEntry } from '../types';
-import { ABOUT_CONTENT, CONTACT_DETAILS, PROJECTS, SERVICES, SOCIAL_LINKS, TEAM_MEMBERS, TESTIMONIALS, VLOG_ENTRIES } from '../constants';
+const TABLE = 'site_content';
+const SINGLETON_ID = 'main';
 
-const KEYS = {
-  PROJECTS: 'miledesigns_projects',
-  SERVICES: 'miledesigns_services',
-  TESTIMONIALS: 'miledesigns_testimonials',
-  SOCIAL_LINKS: 'miledesigns_social_links',
-  CONTACT_DETAILS: 'miledesigns_contact_details',
-  ABOUT_CONTENT: 'miledesigns_about_content',
-  TEAM_MEMBERS: 'miledesigns_team_members',
-  VLOG_ENTRIES: 'miledesigns_vlog_entries'
+const defaultData: SiteContentData = {
+  projects: PROJECTS,
+  services: SERVICES,
+  testimonials: TESTIMONIALS,
+  socialLinks: SOCIAL_LINKS,
+  contactDetails: CONTACT_DETAILS,
+  aboutContent: ABOUT_CONTENT,
+  teamMembers: TEAM_MEMBERS,
+  vlogEntries: VLOG_ENTRIES,
+  adminProfile: ADMIN_PROFILE
+};
+
+const normalizeContactDetails = (parsed: Partial<ContactDetails> | null | undefined): ContactDetails => ({
+  ...CONTACT_DETAILS,
+  ...parsed,
+  phoneNumbers: Array.isArray(parsed?.phoneNumbers) ? parsed!.phoneNumbers : CONTACT_DETAILS.phoneNumbers
+});
+
+const normalizeAboutContent = (parsed: Partial<AboutContent> | null | undefined): AboutContent => ({
+  ...ABOUT_CONTENT,
+  ...parsed,
+  stats: Array.isArray(parsed?.stats) && parsed!.stats.length > 0 ? parsed!.stats : ABOUT_CONTENT.stats,
+  homeBackgroundImages:
+    Array.isArray(parsed?.homeBackgroundImages) && parsed!.homeBackgroundImages.length > 0
+      ? parsed!.homeBackgroundImages
+      : ABOUT_CONTENT.homeBackgroundImages
+});
+
+const normalizeSocialLinks = (parsed: SocialLink[] | null | undefined): SocialLink[] => {
+  if (!Array.isArray(parsed)) return SOCIAL_LINKS;
+  const existingIds = new Set(parsed.map((item) => item.id));
+  const missingDefaults = SOCIAL_LINKS.filter((item) => !existingIds.has(item.id));
+  return missingDefaults.length > 0 ? [...parsed, ...missingDefaults] : parsed;
+};
+
+const normalizeSubAdmins = (subAdmins: unknown): SubAdmin[] => {
+  if (!Array.isArray(subAdmins)) return ADMIN_PROFILE.subAdmins;
+  return subAdmins.filter(
+    (item): item is SubAdmin =>
+      Boolean(item && typeof item === 'object' && typeof (item as SubAdmin).id === 'string' && typeof (item as SubAdmin).email === 'string')
+  );
+};
+
+const normalizeAdminProfile = (parsed: Partial<AdminProfile> | null | undefined): AdminProfile => ({
+  ...ADMIN_PROFILE,
+  ...parsed,
+  subAdmins: normalizeSubAdmins(parsed?.subAdmins)
+});
+
+const normalizeSiteContent = (raw: Partial<SiteContentData> | null | undefined): SiteContentData => ({
+  projects: Array.isArray(raw?.projects) ? raw!.projects : PROJECTS,
+  services: Array.isArray(raw?.services) ? raw!.services : SERVICES,
+  testimonials: Array.isArray(raw?.testimonials) ? raw!.testimonials : TESTIMONIALS,
+  socialLinks: normalizeSocialLinks(raw?.socialLinks),
+  contactDetails: normalizeContactDetails(raw?.contactDetails),
+  aboutContent: normalizeAboutContent(raw?.aboutContent),
+  teamMembers: Array.isArray(raw?.teamMembers) ? raw!.teamMembers : TEAM_MEMBERS,
+  vlogEntries: Array.isArray(raw?.vlogEntries) ? raw!.vlogEntries : VLOG_ENTRIES,
+  adminProfile: normalizeAdminProfile(raw?.adminProfile)
+});
+
+const ensureSingletonRow = async (): Promise<SiteContentData> => {
+  const { data, error } = await supabase
+    .from(TABLE)
+    .select('content')
+    .eq('id', SINGLETON_ID)
+    .maybeSingle();
+
+  if (error) {
+    throw new Error(`Failed to fetch site content: ${error.message}`);
+  }
+
+  if (data?.content) {
+    return normalizeSiteContent(data.content as Partial<SiteContentData>);
+  }
+
+  const { error: insertError } = await supabase.from(TABLE).upsert(
+    {
+      id: SINGLETON_ID,
+      content: defaultData
+    },
+    { onConflict: 'id' }
+  );
+
+  if (insertError) {
+    throw new Error(`Failed to initialize site content: ${insertError.message}`);
+  }
+
+  return defaultData;
 };
 
 export const storageService = {
-  getProjects: (): Project[] => {
-    const saved = localStorage.getItem(KEYS.PROJECTS);
-    return saved ? JSON.parse(saved) : PROJECTS;
-  },
-  saveProjects: (data: Project[]) => {
-    localStorage.setItem(KEYS.PROJECTS, JSON.stringify(data));
+  async getAllContent(): Promise<SiteContentData> {
+    return ensureSingletonRow();
   },
 
-  getServices: (): Service[] => {
-    const saved = localStorage.getItem(KEYS.SERVICES);
-    return saved ? JSON.parse(saved) : SERVICES;
-  },
-  saveServices: (data: Service[]) => {
-    localStorage.setItem(KEYS.SERVICES, JSON.stringify(data));
+  async saveAllContent(data: SiteContentData): Promise<void> {
+    const normalized = normalizeSiteContent(data);
+    const { error } = await supabase.from(TABLE).upsert(
+      {
+        id: SINGLETON_ID,
+        content: normalized
+      },
+      { onConflict: 'id' }
+    );
+
+    if (error) {
+      throw new Error(`Failed to save site content: ${error.message}`);
+    }
   },
 
-  getTestimonials: (): Testimonial[] => {
-    const saved = localStorage.getItem(KEYS.TESTIMONIALS);
-    return saved ? JSON.parse(saved) : TESTIMONIALS;
-  },
-  saveTestimonials: (data: Testimonial[]) => {
-    localStorage.setItem(KEYS.TESTIMONIALS, JSON.stringify(data));
+  async getProjects(): Promise<Project[]> {
+    const data = await ensureSingletonRow();
+    return data.projects;
   },
 
-  getSocialLinks: (): SocialLink[] => {
-    const saved = localStorage.getItem(KEYS.SOCIAL_LINKS);
-    if (!saved) return SOCIAL_LINKS;
-    const parsed = JSON.parse(saved) as SocialLink[];
-    const existingIds = new Set(parsed.map((item) => item.id));
-    const missingDefaults = SOCIAL_LINKS.filter((item) => !existingIds.has(item.id));
-    return missingDefaults.length > 0 ? [...parsed, ...missingDefaults] : parsed;
-  },
-  saveSocialLinks: (data: SocialLink[]) => {
-    localStorage.setItem(KEYS.SOCIAL_LINKS, JSON.stringify(data));
+  async saveProjects(projects: Project[]): Promise<void> {
+    const data = await ensureSingletonRow();
+    await this.saveAllContent({ ...data, projects });
   },
 
-  getContactDetails: (): ContactDetails => {
-    const saved = localStorage.getItem(KEYS.CONTACT_DETAILS);
-    if (!saved) return CONTACT_DETAILS;
-    const parsed = JSON.parse(saved) as Partial<ContactDetails>;
-    return {
-      ...CONTACT_DETAILS,
-      ...parsed,
-      phoneNumbers: Array.isArray(parsed.phoneNumbers) ? parsed.phoneNumbers : CONTACT_DETAILS.phoneNumbers
-    };
-  },
-  saveContactDetails: (data: ContactDetails) => {
-    localStorage.setItem(KEYS.CONTACT_DETAILS, JSON.stringify(data));
+  async getServices(): Promise<Service[]> {
+    const data = await ensureSingletonRow();
+    return data.services;
   },
 
-  getAboutContent: (): AboutContent => {
-    const saved = localStorage.getItem(KEYS.ABOUT_CONTENT);
-    return saved ? JSON.parse(saved) : ABOUT_CONTENT;
-  },
-  saveAboutContent: (data: AboutContent) => {
-    localStorage.setItem(KEYS.ABOUT_CONTENT, JSON.stringify(data));
+  async saveServices(services: Service[]): Promise<void> {
+    const data = await ensureSingletonRow();
+    await this.saveAllContent({ ...data, services });
   },
 
-  getTeamMembers: (): TeamMember[] => {
-    const saved = localStorage.getItem(KEYS.TEAM_MEMBERS);
-    return saved ? JSON.parse(saved) : TEAM_MEMBERS;
-  },
-  saveTeamMembers: (data: TeamMember[]) => {
-    localStorage.setItem(KEYS.TEAM_MEMBERS, JSON.stringify(data));
+  async getTestimonials(): Promise<Testimonial[]> {
+    const data = await ensureSingletonRow();
+    return data.testimonials;
   },
 
-  getVlogEntries: (): VlogEntry[] => {
-    const saved = localStorage.getItem(KEYS.VLOG_ENTRIES);
-    return saved ? JSON.parse(saved) : VLOG_ENTRIES;
-  },
-  saveVlogEntries: (data: VlogEntry[]) => {
-    localStorage.setItem(KEYS.VLOG_ENTRIES, JSON.stringify(data));
+  async saveTestimonials(testimonials: Testimonial[]): Promise<void> {
+    const data = await ensureSingletonRow();
+    await this.saveAllContent({ ...data, testimonials });
   },
 
-  reset: () => {
-    localStorage.clear();
-    window.location.reload();
+  async getSocialLinks(): Promise<SocialLink[]> {
+    const data = await ensureSingletonRow();
+    return data.socialLinks;
+  },
+
+  async saveSocialLinks(socialLinks: SocialLink[]): Promise<void> {
+    const data = await ensureSingletonRow();
+    await this.saveAllContent({ ...data, socialLinks });
+  },
+
+  async getContactDetails(): Promise<ContactDetails> {
+    const data = await ensureSingletonRow();
+    return data.contactDetails;
+  },
+
+  async saveContactDetails(contactDetails: ContactDetails): Promise<void> {
+    const data = await ensureSingletonRow();
+    await this.saveAllContent({ ...data, contactDetails });
+  },
+
+  async getAboutContent(): Promise<AboutContent> {
+    const data = await ensureSingletonRow();
+    return data.aboutContent;
+  },
+
+  async saveAboutContent(aboutContent: AboutContent): Promise<void> {
+    const data = await ensureSingletonRow();
+    await this.saveAllContent({ ...data, aboutContent });
+  },
+
+  async getAdminProfile(): Promise<AdminProfile> {
+    const data = await ensureSingletonRow();
+    return data.adminProfile;
+  },
+
+  async saveAdminProfile(adminProfile: AdminProfile): Promise<void> {
+    const data = await ensureSingletonRow();
+    await this.saveAllContent({ ...data, adminProfile: normalizeAdminProfile(adminProfile) });
+  },
+
+  async getTeamMembers(): Promise<TeamMember[]> {
+    const data = await ensureSingletonRow();
+    return data.teamMembers;
+  },
+
+  async saveTeamMembers(teamMembers: TeamMember[]): Promise<void> {
+    const data = await ensureSingletonRow();
+    await this.saveAllContent({ ...data, teamMembers });
+  },
+
+  async getVlogEntries(): Promise<VlogEntry[]> {
+    const data = await ensureSingletonRow();
+    return data.vlogEntries;
+  },
+
+  async saveVlogEntries(vlogEntries: VlogEntry[]): Promise<void> {
+    const data = await ensureSingletonRow();
+    await this.saveAllContent({ ...data, vlogEntries });
+  },
+
+  async reset(): Promise<void> {
+    await this.saveAllContent(defaultData);
+  }
+};
+
+export const authService = {
+  async signIn(email: string, password: string): Promise<void> {
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) {
+      throw new Error(error.message);
+    }
+  },
+
+  async signOut(): Promise<void> {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      throw new Error(error.message);
+    }
+  },
+
+  async getCurrentUserEmail(): Promise<string | null> {
+    const { data, error } = await supabase.auth.getUser();
+    if (error) {
+      throw new Error(error.message);
+    }
+    return data.user?.email ?? null;
+  },
+
+  onAuthStateChange(callback: (email: string | null) => void): () => void {
+    const { data } = supabase.auth.onAuthStateChange((_event, session) => {
+      callback(session?.user?.email ?? null);
+    });
+
+    return () => data.subscription.unsubscribe();
   }
 };

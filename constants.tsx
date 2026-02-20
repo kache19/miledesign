@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { AboutContent, ContactDetails, Service, Project, SocialLink, TeamMember, Testimonial, VlogEntry } from './types';
+import { AboutContent, AdminProfile, ContactDetails, Service, Project, SocialLink, TeamMember, Testimonial, VlogEntry } from './types';
 
 export const SERVICES: Service[] = [
   {
@@ -169,6 +169,8 @@ export const CONTACT_DETAILS: ContactDetails = {
   id: 'contact-details',
   location: '772 Industrial Way, NY',
   phoneNumbers: ['+1 (888) MILE-01'],
+  inquiryEmail: 'info@miledesigns.com',
+  inquiryWhatsAppNumber: '+18880000000',
   showFloatingWhatsApp: true,
   floatingWhatsAppMessage: 'Hi, am here to serve you!'
 };
@@ -183,10 +185,27 @@ export const ABOUT_CONTENT: AboutContent = {
     'Founded in 2025, MILEDESIGNS bridges the gap between visionary architecture and uncompromising engineering. We create spaces that shape who you are.',
   bodyText:
     "Our team consists of award-winning architects, master craftsmen, and sustainability experts who believe that every blueprint is a promise of quality. We don't just follow industry standards; we set them through rigorous material selection and innovative construction technology.",
+  stats: [
+    { value: '15', suffix: '+', label: 'Years of Excellence', description: 'Since 2008' },
+    { value: '450', suffix: '+', label: 'Projects Completed', description: 'Successful Handover' },
+    { value: '98', suffix: '%', label: 'Client Satisfaction', description: 'Rating Score' },
+    { value: '35', suffix: '', label: 'Design Awards', description: 'Industry Recognition' }
+  ],
+  homeBackgroundImages: [
+    'https://images.unsplash.com/photo-1487958449943-2429e8be8625?auto=format&fit=crop&q=80&w=2070'
+  ],
   imageUrl: 'https://images.unsplash.com/photo-1503387762-592dee58c460?auto=format&fit=crop&q=80&w=2000',
   visionText: 'Sustainable. Functional. Aesthetic.',
   ctaText: 'Ready to bring your vision to life?',
   ctaButtonText: 'Get in Touch'
+};
+
+export const ADMIN_PROFILE: AdminProfile = {
+  id: 'admin-profile',
+  name: 'Site Administrator',
+  email: 'admin@miledesigns.com',
+  avatarUrl: 'https://i.pravatar.cc/150?u=admin-miledesigns',
+  subAdmins: []
 };
 
 export const TEAM_MEMBERS: TeamMember[] = [

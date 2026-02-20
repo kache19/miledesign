@@ -67,7 +67,6 @@ const Navigation: React.FC<NavigationProps> = ({ onNavClick }) => {
     { name: 'Vlog', id: 'vlog' },
     { name: 'Location', id: 'location' },
     { name: 'Testimonials', id: 'testimonials' },
-    { name: 'Estimator', id: 'calculator' },
   ];
 
   return (
