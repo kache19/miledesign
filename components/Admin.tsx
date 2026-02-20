@@ -340,23 +340,6 @@ const Admin: React.FC<AdminProps> = ({ onClose, onDataUpdate }) => {
     }
   };
 
-  const handleCreateAccount = async () => {
-    const email = loginEmail.trim().toLowerCase();
-    const loginPassword = password.trim();
-
-    if (!email || !loginPassword) {
-      notify('error', 'Enter email and password first, then create account.');
-      return;
-    }
-
-    try {
-      await authService.signUp(email, loginPassword);
-      notify('success', 'Account created. Verify email if required, then log in.');
-    } catch (error) {
-      notify('error', error instanceof Error ? error.message : 'Could not create account.');
-    }
-  };
-
   const addSubAdmin = async () => {
     const name = newSubAdmin.name.trim();
     const email = newSubAdmin.email.trim().toLowerCase();
@@ -728,6 +711,19 @@ const Admin: React.FC<AdminProps> = ({ onClose, onDataUpdate }) => {
       <div className="fixed inset-0 z-[100] bg-slate-950 flex items-center justify-center p-4">
         <div className="bg-slate-900 p-8 rounded-[2rem] border border-slate-800 w-full max-w-md shadow-2xl animate-in fade-in zoom-in-95 duration-300">
           <h2 className="text-xl font-serif font-bold text-white mb-6 text-center">Admin Portal</h2>
+          {toast && (
+            <div
+              className={`mb-4 rounded-xl border px-4 py-3 text-sm font-medium ${
+                toast.type === 'success'
+                  ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
+                  : toast.type === 'error'
+                    ? 'bg-red-50 text-red-800 border-red-200'
+                    : 'bg-sky-50 text-sky-800 border-sky-200'
+              }`}
+            >
+              {toast.message}
+            </div>
+          )}
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
               <label className="block text-[11px] uppercase tracking-widest text-slate-500 font-bold mb-1.5">Admin Email</label>
@@ -752,13 +748,6 @@ const Admin: React.FC<AdminProps> = ({ onClose, onDataUpdate }) => {
             </div>
             <button type="submit" className="w-full bg-terracotta text-white font-bold py-3 rounded-xl hover:bg-terracotta-hover transition-colors active:scale-[0.98]">
               Unlock Dashboard
-            </button>
-            <button
-              type="button"
-              onClick={() => void handleCreateAccount()}
-              className="w-full border border-slate-700 text-slate-200 font-semibold py-3 rounded-xl hover:bg-slate-800 transition-colors"
-            >
-              Create Admin Account
             </button>
             <button type="button" onClick={handleExitAdmin} className="w-full text-slate-500 text-sm py-2 hover:text-white transition-colors">
               Cancel
