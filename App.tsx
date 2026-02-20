@@ -459,7 +459,12 @@ const App: React.FC = () => {
     runtimeConfig?.INQUIRY_WHATSAPP_NUMBER ||
     CONTACT_DETAILS.inquiryWhatsAppNumber;
   const inquiryWhatsAppNumber = rawInquiryWhatsApp.replace(/\D/g, '');
-  const whatsappUrl = inquiryWhatsAppNumber ? `https://wa.me/${inquiryWhatsAppNumber}` : '';
+  const floatingWhatsappMessage = encodeURIComponent(
+    "Hello, I'm a client contacting you from the MILEDESIGNS website."
+  );
+  const whatsappUrl = inquiryWhatsAppNumber
+    ? `https://wa.me/${inquiryWhatsAppNumber}?text=${floatingWhatsappMessage}`
+    : '';
   const gmailUrl = inquiryEmail
     ? `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(inquiryEmail)}`
     : '';
