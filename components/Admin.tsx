@@ -834,7 +834,7 @@ const Admin: React.FC<AdminProps> = ({ onClose, onDataUpdate }) => {
       <div className="w-full lg:w-64 bg-slate-900 text-white p-4 lg:p-6 flex flex-col border-b lg:border-b-0 lg:border-r border-slate-800 shrink-0">
         <div className="flex items-center justify-between lg:block lg:mb-10">
           <div className="text-lg font-serif font-bold tracking-tighter">
-            MILEDESIGNS <span className="text-terracotta">Admin</span>
+            MILEDESIGN CONSTRUCTION AND PROJECT MANAGEMENT <span className="text-terracotta">Admin</span>
           </div>
           <button onClick={handleExitAdmin} className="lg:hidden p-2 text-slate-400">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>

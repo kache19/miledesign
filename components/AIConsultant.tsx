@@ -36,7 +36,7 @@ export default function AIConsultant({
           🤖
         </div>
         <div>
-          <h3 className="text-white font-bold text-sm md:text-base tracking-tight">MILEDESIGNS AI Architect</h3>
+          <h3 className="text-white font-bold text-sm md:text-base tracking-tight">MILEDESIGN CONSTRUCTION AND PROJECT MANAGEMENT AI Architect</h3>
           <p className="text-[10px] md:text-xs text-slate-400 font-medium">Online • Designing with Gemini</p>
         </div>
       </div>

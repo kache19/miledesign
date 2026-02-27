@@ -514,7 +514,7 @@ const App: React.FC = () => {
     return (
       <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center">
         <div className="w-16 h-16 border-4 border-terracotta/20 border-t-terracotta rounded-full animate-spin mb-6"></div>
-        <div className="text-white font-quote text-2xl animate-pulse tracking-tighter">MILEDESIGN CONSTRUCTION AND PROJECT MANAGEMENT</div>
+        <div className="text-white font-subheading text-sm md:text-base uppercase tracking-[0.35em] animate-pulse text-center px-6">MILEDESIGN CONSTRUCTION AND PROJECT MANAGEMENT</div>
       </div>
     );
   }
