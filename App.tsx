@@ -452,7 +452,7 @@ const App: React.FC = () => {
     CONTACT_DETAILS.inquiryWhatsAppNumber;
   const inquiryWhatsAppNumber = rawInquiryWhatsApp.replace(/\D/g, '');
   const floatingWhatsappMessage = encodeURIComponent(
-    "Hello, I'm a client contacting you from the MILEDESIGNS website."
+    "Hello, I'm a client contacting you from the MILEDESIGN CONSTRUCTION AND PROJECT MANAGEMENT website."
   );
   const whatsappUrl = inquiryWhatsAppNumber
     ? `https://wa.me/${inquiryWhatsAppNumber}?text=${floatingWhatsappMessage}`
@@ -514,7 +514,7 @@ const App: React.FC = () => {
     return (
       <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center">
         <div className="w-16 h-16 border-4 border-terracotta/20 border-t-terracotta rounded-full animate-spin mb-6"></div>
-        <div className="text-white font-serif text-2xl animate-pulse tracking-tighter">MILEDESIGNS</div>
+        <div className="text-white font-quote text-2xl animate-pulse tracking-tighter">MILEDESIGN CONSTRUCTION AND PROJECT MANAGEMENT</div>
       </div>
     );
   }
@@ -608,7 +608,7 @@ const App: React.FC = () => {
               <span className="inline-block px-4 py-1.5 bg-terracotta text-white text-[9px] md:text-[10px] font-bold uppercase tracking-[0.3em] rounded-full mb-4 md:mb-6">
                 {selectedProject.category} • {selectedProject.year}
               </span>
-              <h1 className="text-3xl md:text-5xl lg:text-6xl font-serif font-bold text-slate-900 mb-4 md:mb-6 leading-tight">{selectedProject.title}</h1>
+              <h1 className="text-3xl md:text-5xl lg:text-6xl font-heading font-bold text-slate-900 mb-4 md:mb-6 leading-tight">{selectedProject.title}</h1>
               <div className="flex items-center text-slate-500 mb-8 md:mb-10 font-medium text-sm md:text-base">
                 <svg className="w-4 h-4 md:w-5 md:h-5 mr-2 text-sagegreen" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -637,7 +637,7 @@ const App: React.FC = () => {
 
               <div className="mt-12 md:mt-16 p-6 md:p-10 bg-slate-900 rounded-2xl md:rounded-[2.5rem] text-white shadow-2xl relative overflow-hidden group">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-terracotta/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:bg-terracotta/20 transition-colors"></div>
-                <h4 className="text-xl md:text-2xl font-serif font-bold mb-3 md:mb-4 relative z-10">Start your project</h4>
+                <h4 className="text-xl md:text-2xl font-heading font-bold mb-3 md:mb-4 relative z-10">Start your project</h4>
                 <p className="text-slate-400 mb-8 md:mb-10 text-[11px] md:text-sm leading-relaxed relative z-10">Our architectural experts are ready to draft your vision into reality. Let's discuss requirements and feasibility today.</p>
                 <button 
                   onClick={() => scrollTo('contact')}
@@ -656,8 +656,8 @@ const App: React.FC = () => {
                 <footer className="bg-slate-950 text-slate-500 py-12 border-t border-slate-900 mt-auto">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex flex-col md:flex-row items-center justify-center gap-3 md:gap-6 text-center">
-              <span className="text-2xl font-serif font-bold text-white tracking-tighter">MILEDESIGNS</span>
-              <span className="text-[10px] md:text-xs uppercase tracking-[0.3em] font-bold">(c) 2026 Miledesigns</span>
+              <span className="text-2xl font-quote font-bold text-white tracking-tighter">MILEDESIGN CONSTRUCTION AND PROJECT MANAGEMENT</span>
+              <span className="text-[10px] md:text-xs uppercase tracking-[0.3em] font-bold">(c) {new Date().getFullYear()} Miledesigns</span>
               <p className="text-[10px] md:text-xs uppercase tracking-[0.2em] font-semibold text-slate-400">
                 Developer:{' '}
                 <a
@@ -707,7 +707,7 @@ const App: React.FC = () => {
               <span className="text-terracotta text-xs font-bold uppercase tracking-[0.25em]">Architecture & Construction </span>
             </div>
             
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-serif font-bold text-white mb-6 leading-tight reveal-item">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-heading font-bold text-white mb-6 leading-tight reveal-item">
               Where Vision <span className="text-terracotta">Meets</span> Reality
             </h1>
             
@@ -812,7 +812,7 @@ const App: React.FC = () => {
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent flex flex-col justify-end p-5 md:p-6">
                           <span className="text-skyblue text-[10px] font-bold uppercase tracking-[0.25em] mb-1.5">{project.category} • {project.year}</span>
-                          <h4 className="text-lg md:text-xl font-serif font-bold text-white mb-1.5">{project.title}</h4>
+                          <h4 className="text-lg md:text-xl font-heading font-bold text-white mb-1.5">{project.title}</h4>
                           <span className="text-slate-300 text-xs">{project.location}</span>
                         </div>
                       </button>
@@ -1173,8 +1173,8 @@ const App: React.FC = () => {
             <footer className="bg-slate-950 text-slate-500 py-10 border-t border-slate-900 shrink-0">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row items-center justify-center gap-3 md:gap-6 text-center">
-            <span className="text-xl md:text-2xl font-serif font-bold text-white tracking-tighter">MILEDESIGNS</span>
-            <span className="text-xs uppercase tracking-[0.2em] font-bold text-slate-500">(c) 2026 Miledesigns</span>
+            <span className="text-xl md:text-2xl font-quote font-bold text-white tracking-tighter"></span>
+            <span className="text-xs uppercase tracking-[0.2em] font-bold text-slate-500">(c) {new Date().getFullYear()} Miledesigns</span>
             <p className="text-[10px] md:text-xs uppercase tracking-[0.2em] font-semibold text-slate-400">
               Developer:{' '}
               <a

@@ -14,7 +14,12 @@
   --color-sagegreen-light: #EAF2EA;
 
   /* Typography */
-  --font-family-sans: 'Inter', sans-serif;
+  --font-family-body: 'Lato', sans-serif;
+  --font-family-heading: 'Montserrat', sans-serif;
+  --font-family-subheading: 'Montserrat', sans-serif;
+  --font-family-quote: 'Playfair Display', serif;
+
+  --font-family-sans: 'Lato', sans-serif;
   --font-family-serif: 'Playfair Display', serif;
 
   /* Animation */

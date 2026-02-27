@@ -85,18 +85,18 @@ const Navigation: React.FC<NavigationProps> = ({ onNavClick }) => {
               onClick={() => handleNavClick('home')}
               className="flex items-center space-x-2 transition-colors duration-300 group outline-none"
             >
-              <span className={`text-xl md:text-2xl font-serif font-bold tracking-tight transition-colors ${
+              <span className={`text-lg md:text-xl font-serif font-bold tracking-tight transition-colors ${
                 isMenuOpen ? 'text-white' : 'text-slate-900 group-hover:text-terracotta'
               }`}>
-                MILEDESIGNS
+                MILEDESIGN CONSTRUCTION
               </span>
               <div className={`hidden sm:block h-6 w-px transition-colors ${
                 isMenuOpen ? 'bg-slate-700' : 'bg-slate-300'
               }`}></div>
-              <span className={`hidden sm:block text-[10px] md:text-xs tracking-widest uppercase font-bold transition-colors ${
+              <span className={`hidden sm:block text-[9px] md:text-[10px] tracking-widest uppercase font-bold transition-colors ${
                 isMenuOpen ? 'text-slate-400' : 'text-slate-500 group-hover:text-slate-700'
               }`}>
-                Design & Build
+                PROJESCT MANAGEMENT
               </span>
             </button>
 

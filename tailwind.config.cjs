@@ -24,8 +24,11 @@ module.exports = {
         }
       },
       fontFamily: {
-        sans: ['Inter', 'sans-serif'],
+        sans: ['Lato', 'sans-serif'],
         serif: ['Playfair Display', 'serif'],
+        heading: ['Montserrat', 'sans-serif'],
+        subheading: ['Montserrat', 'sans-serif'],
+        quote: ['Playfair Display', 'serif'],
       }
     }
   },

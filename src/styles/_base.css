@@ -2,8 +2,26 @@
 
 /* Font Setup */
 body {
-  font-family: var(--font-family-sans);
+  font-family: var(--font-family-body);
   scroll-behavior: smooth;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-family-heading);
+}
+
+.font-heading {
+  font-family: var(--font-family-heading);
+}
+
+.font-subheading {
+  font-family: var(--font-family-subheading);
+  font-weight: 600;
+}
+
+.font-quote {
+  font-family: var(--font-family-quote);
+  font-style: italic;
 }
 
 .font-serif {

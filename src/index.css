@@ -19,6 +19,9 @@
   --color-sagegreen-hover: #7EAB7E;
   --color-sagegreen-light: #EAF2EA;
   
-  --font-sans: 'Inter', sans-serif;
+  --font-sans: 'Lato', sans-serif;
   --font-serif: 'Playfair Display', serif;
+  --font-heading: 'Montserrat', sans-serif;
+  --font-subheading: 'Montserrat', sans-serif;
+  --font-quote: 'Playfair Display', serif;
 }
